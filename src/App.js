@@ -19,11 +19,7 @@ const App = observer (() =>  {
         token: {colorBgContainer},
     } = theme.useToken();
 
-    useEffect(() => {
-        if(localStorage.getItem('token')){
-            checkAuthService(user).finally(()=> setLoading(false))
-        }
-    }, []);
+
 
     if (loading){
         return (
