@@ -27,6 +27,11 @@ const App = observer (() =>  {
             </div>
         )
     }
+    // useEffect(() => {
+    //     if(localStorage.getItem('token')){
+    //         checkAuthService(user).finally(()=> setLoading(false))
+    //     }
+    // }, []);
 
     return (
         <BrowserRouter>
