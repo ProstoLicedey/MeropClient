@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {Alert, Button, DatePicker, Form, Input, Typography} from "antd";
+import {Alert, Button, DatePicker, Form, Input, Space, Typography} from "antd";
 import onCreate from "../../services/userService/authService";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
@@ -9,18 +9,17 @@ import {SmartCaptcha} from "@yandex/smart-captcha";
 const {Text, Link} = Typography
 
 const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
-    const [token, setToken] = useState('');
     const [form] = Form.useForm();
     const [isRegistration, setIsRegistration] = useState(!!idCreator);
     const [message, setMessage] = useState(false);
     const [buttonActiv, setButtonActiv] = useState(false);
     const {user} = useContext(Context)
     const [openPas, setOpenPas] = useState(false);
+    const [captch_check, setCaptch_check] = useState(false);
 
     title(isRegistration ? (!!idCreator ? "Добовление контроллера" : "Регистрация") : "Авторизация");
     const buttonText = !isRegistration ? 'Войти' : (!!idCreator ? 'Добавить контроллера' : 'Зарегистрироваться');
-    const buttonLabel = !isRegistration? 'Зарегистрироваться' : (!!idCreator ? '': 'Войти');
-
+    const buttonLabel = !isRegistration ? 'Зарегистрироваться' : (!!idCreator ? '' : 'Войти');
     const recap = () => {
         setButtonActiv(true)
     }
@@ -63,11 +62,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
             >
                 <Input.Password/>
             </Form.Item>
-            <div hidden={isRegistration}
-                 style={{textAlign: 'right', cursor: 'pointer'}}
-            >
-                <Text underline onClick={() => setPassUpdate(true)}>Забыли пароль?</Text>
-            </div>
+
             <Form.Item
                 hidden={!isRegistration}
                 label="Повторите пароль"
@@ -133,33 +128,44 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                 <DatePicker sty placeholder=""/>
             </Form.Item>
 
+            <Space size={'large'}>
+                <SmartCaptcha sitekey={process.env.REACT_APP_CAPTCHA_KEY}
+                              onSuccess={() => setCaptch_check(true)} />
+            </Space>
+            <div hidden={isRegistration}
+                 style={{textAlign: 'right', cursor: 'pointer'}}
+            >
+                <Text underline onClick={() => setPassUpdate(true)}>Забыли пароль?</Text>
+            </div>
 
-            <SmartCaptcha sitekey="ysc1_o9rUAGXMfDVEYtHLupH0N7aBhp3Pn2g6FwptRbpM2555a297" onSuccess={setToken} />
             <Form.Item style={{textAlign: 'center'}}>
                 <Button type="primary" htmlType="submit"
                         style={{width: 220, height: 40, fontSize: 18, backgroundColor: '#722ed1'}}
                     // disabled = {!buttonActiv}
                         onClick={() => {
-                            setMessage('')
+                            setMessage('');
                             form
                                 .validateFields()
                                 .then((values) => {
-                                    onCreate(values, user, isRegistration, (!!idCreator ? 'CONTROLLER' : 'USER'), idCreator)
-                                        .then(result => {
-                                            if (result === true) {
-                                                console.log(result)
-                                                setIsRegistration(false);
-                                                form.resetFields();
-                                                onCancel();
-                                                setMessage('')
-                                            } else {
-                                                isRegistration ?
-                                                    setMessage("Данный email уже зарегестрирован")
-                                                    :
-                                                    setMessage("Логин и пароль не совпадают")
-                                            }
-                                        });
-
+                                    if (captch_check) {
+                                        onCreate(values, user, isRegistration, (!!idCreator ? 'CONTROLLER' : 'USER'), idCreator)
+                                            .then(result => {
+                                                if (result === true) {
+                                                    console.log(result);
+                                                    setIsRegistration(false);
+                                                    form.resetFields();
+                                                    onCancel();
+                                                    setMessage('');
+                                                } else {
+                                                    isRegistration ?
+                                                        setMessage("Данный email уже зарегистрирован") :
+                                                        setMessage("Логин и пароль не совпадают");
+                                                }
+                                            });
+                                    } else {
+                                        // Handle case when Captch_check is false
+                                        setMessage("Проверка Captcha не пройдена");
+                                    }
                                 })
                                 .catch((info) => {
                                     console.log('Failed:', info);

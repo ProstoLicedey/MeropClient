@@ -25,6 +25,7 @@ import CreateEntrance from "../../components/creator/ModalZal/createEntrance";
 import ModalZal from "../../components/creator/ModalZal/ModalZal";
 import {createEntrance, getEntranceUser, getOneEntrance} from "../../http/entranceAPI";
 import {values} from "mobx";
+import {SmartCaptcha} from "@yandex/smart-captcha";
 
 const {Text} = Typography;
 
@@ -84,6 +85,7 @@ const CreateEvent = () => {
     const [formEvent] = Form.useForm();
     const titleText = id == undefined ? "Создание мероприятия" : "Редактирование мероприятия";
     const [fileList, setFileList] = React.useState([]);
+    const [captch_check, setCaptch_check] = useState(false);
 
     useEffect(() => {
 
@@ -263,10 +265,26 @@ const CreateEvent = () => {
                             <Select options={event.ratings}/>
                         </Form.Item>
 
+                        <Form.Item
+                            label="Проверка"
+                            name="captcha"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Необходимо пргойти капчу',
+                                },
+                            ]}
+                        >
+                            <SmartCaptcha sitekey={process.env.REACT_APP_CAPTCHA_KEY_CREATOR}
+                                          onSuccess={() => {
+                                              setCaptch_check(true)
+                                              formEvent.setFieldsValue({captcha: true});
+                                          }}
 
-                        <Typography>
-                            <pre>{JSON.stringify(formEvent.getFieldsValue(), null, 2)}</pre>
-                        </Typography>
+
+                            />
+                        </Form.Item>
+
                     </Form>
                 </Space>
             </Col>
@@ -317,16 +335,22 @@ const CreateEvent = () => {
                                                 >
                                                     <Tooltip title="Убрать категорию в этом мероприятие ">
                                                         <div style={{position: 'absolute', top: 0, right: 3}}>
+                                                            <Form.Item name={[name, 'switchState']}>
                                                             <Switch
                                                                 defaultChecked={true}
                                                                 size="small"
                                                                 {...restField}
                                                                 checked={switchStates[name]}
-                                                                onChange={(checked) => setSwitchStates((prevStates) => ({
-                                                                    ...prevStates,
-                                                                    [name]: checked
-                                                                }))}
+                                                                onChange={(checked) => {
+                                                                    setSwitchStates((prevStates) => ({
+                                                                        ...prevStates,
+                                                                        [name]: checked
+                                                                    }))
+
+                                                                }
+                                                                }
                                                             />
+                                                            </Form.Item>
                                                         </div>
                                                     </Tooltip>
 
@@ -371,25 +395,23 @@ const CreateEvent = () => {
                                 onClick={() => {
                                     formEvent
                                         .validateFields()
-                                        .then(
-                                            form
-
-                                                .validateFields()
-                                                .then(
-                                                    () => {
-                                                        console.log(fileList)
-                                                        createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form)
+                                        .then(() => {
+                                            form.validateFields()
+                                                .then(() => {
+                                                    if (captch_check) {
+                                                        createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue());
                                                     }
-                                                )
+                                                })
                                                 .catch((error) => {
                                                     console.error("Error during form validation:", error);
-                                                })
-                                        )
+                                                });
+                                        })
                                         .catch((error) => {
                                             console.error("Error during form validation:", error);
-                                        })
+                                        });
                                 }}
                             >
+
                                 Создать
                             </Button>
                         </Form>)}

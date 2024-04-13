@@ -20,6 +20,14 @@ const App = observer (() =>  {
     } = theme.useToken();
 
 
+
+    useEffect(() => {
+
+        if(localStorage.getItem('token')){
+            checkAuthService(user).then(()=> setLoading(false))
+        }
+    }, []);
+
     if (loading){
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -27,12 +35,6 @@ const App = observer (() =>  {
             </div>
         )
     }
-    // useEffect(() => {
-    //     if(localStorage.getItem('token')){
-    //         checkAuthService(user).finally(()=> setLoading(false))
-    //     }
-    // }, []);
-
     return (
         <BrowserRouter>
 

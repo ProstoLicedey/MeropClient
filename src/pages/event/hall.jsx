@@ -16,7 +16,7 @@ const Hall = () => {
         fetchOneHall(id).then(data => hall.setHall(data));
     }, []);
 
-    if (!hall || !hall.hall || !hall.hall.event || !hall.hall.hollOptionPrice) {
+    if (!hall || !hall.hall || !hall.hall.event || !hall.hall.hallOptionPrice) {
         return null; // Возвращаем null, если нет данных
     }
 
@@ -32,7 +32,7 @@ const Hall = () => {
             <div style={{display: "flex",  alignItems: 'center', justifyContent: 'center', margin:5}}>
                 <HallGenerate numberRows={hall.hall.event.hall.numberRows}
                               numberSeatsInRow={hall.hall.event.hall.numberSeatsInRow}
-                              hallOptionPrice={hall.hall.hollOptionPrice} style={{flex: 1}}/>
+                              hallOptionPrice={hall.hall.hallOptionPrice} tickets={hall.hall.tickets}/>
             </div>
         </Space>
     );

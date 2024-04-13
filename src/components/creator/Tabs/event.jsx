@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {PlusOutlined, SearchOutlined} from '@ant-design/icons';
-import {Button, Flex, Input, Space, Spin, Table} from 'antd';
+import {Button, Flex, Input, Popconfirm, Space, Spin, Table} from 'antd';
 import {fetchEvent, fetchOneEvent, fetchTypes} from "../../../http/eventAPI";
 import {getEventCreator} from "../../../http/creactorAPI";
 import {Context} from "../../../index";
@@ -155,6 +155,34 @@ const Event = () => {
             width: '20%',
             sortDirections: ['descend', 'ascend'],
         },
+        {
+            key: 'actions',
+            render: (record) => {
+                return (
+                    <Space size="large" style={{
+                        display: "flex",
+                        flexFlow: "column"
+                    }}>
+                        <Button style={{
+                            borderColor: 'green',
+                            color: 'green'
+                        }}
+                                onClick={() => {
+                                    // return showModal(record.id)
+                                }}>
+                            Изменить
+                        </Button>
+                        <Popconfirm
+                            title="Вы уверены, что хотите удалить контроллера?"
+                           // onConfirm={() => confirmOneGood(record.controllerId)}
+                            okText="Да"
+                            cancelText="Отмена">
+                            <Button danger>Удалить</Button>
+                        </Popconfirm>
+                    </Space>
+                )
+            }
+        }
     ];
 
     const tableProps = {

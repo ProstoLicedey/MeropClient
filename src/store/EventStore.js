@@ -12,13 +12,16 @@ export default class EventStore {
         this._selectedDate = {}
         this._selectedPrice = {}
 
-        this._page = 1
+        this._page = {}
         this._totalCount = 0
         makeAutoObservable(this)
     }
 
     setTypes(types) {
         this._types = types
+    }
+    setPage(page) {
+        this._page = page
     }
     setRatings(ratings) {
         this._ratings = ratings
@@ -57,6 +60,9 @@ export default class EventStore {
 
     get types() {
         return this._types
+    }
+    get page() {
+        return this._page
     }
     get ratings() {
         return this._ratings

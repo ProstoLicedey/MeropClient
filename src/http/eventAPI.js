@@ -24,8 +24,11 @@ export const createEvent = async (event, userId, file, option) => {
         formData.append('typeId', event.typeId);
         formData.append('ageRatingId', event.ageRatingId);
         formData.append('userId', userId);
-        formData.append('option', option);
         formData.append('img', file);
+        const optionString = JSON.stringify(option.entrances);
+
+        // Добавляем JSON-строку в FormData
+        formData.append('option', optionString);
 
         const {data} = await $host.post('api/event', formData);
 
