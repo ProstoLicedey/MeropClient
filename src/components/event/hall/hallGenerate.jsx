@@ -1,9 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import { Button, message, Space, Tooltip, Typography } from 'antd';
+import React, {useContext, useEffect, useState} from 'react';
+import {Button, message, Space, Tooltip, Typography} from 'antd';
 import Title from 'antd/es/typography/Title';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-const { Text, Link } = Typography;
+import {TransformWrapper, TransformComponent} from 'react-zoom-pan-pinch';
+import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
+import {Context} from "../../../index";
+import {BOOKING_ROUTE, CREATOR_ROUTE} from "../../../utils/consts";
+import {useNavigate, useParams} from "react-router-dom";
+
+const {Text, Link} = Typography;
 
 const color = [
     '#0958d9',
@@ -23,9 +27,12 @@ const color = [
     '#bae637',
 ];
 
-const HallGenerate = ({ numberRows, numberSeatsInRow, hallOptionPrice, tickets }) => {
+const HallGenerate = ({numberRows, numberSeatsInRow, hallOptionPrice, tickets}) => {
+    const {id} = useParams();
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [sum, setSum] = useState(0);
+    const {hall} = useContext(Context);
+    const navigate = useNavigate()
 
     const toggleSeatSelection = (rowIndex, seatIndex) => {
         const seat = `${rowIndex}-${seatIndex}`;
@@ -69,7 +76,7 @@ const HallGenerate = ({ numberRows, numberSeatsInRow, hallOptionPrice, tickets }
 
         row.push(
             <Title
-                style={{ margin: 6, width: 20, whiteSpace: 'nowrap', verticalAlign: 'top' }}
+                style={{margin: 6, width: 20, whiteSpace: 'nowrap', verticalAlign: 'top'}}
                 level={4}
                 key={`row-${rowIndex}`}
             >
@@ -112,12 +119,12 @@ const HallGenerate = ({ numberRows, numberSeatsInRow, hallOptionPrice, tickets }
                             backgroundColor: check ? 'null' : thisColor,
                         }}
                         onClick={() => toggleSeatSelection(rowIndex, j)}
-                    >{isSelected ? <CheckOutlined /> : ''}</Button>
+                    >{isSelected ? <CheckOutlined/> : ''}</Button>
                 </Tooltip>
             );
         }
         return (
-            <div key={`row-${rowIndex}`} style={{ display: 'flex', margin: 3 }}>
+            <div key={`row-${rowIndex}`} style={{display: 'flex', margin: 3}}>
                 {row}
             </div>
         );
@@ -177,10 +184,10 @@ const HallGenerate = ({ numberRows, numberSeatsInRow, hallOptionPrice, tickets }
                 minScale={0.5}
                 maxScale={3}
             >
-                {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+                {({zoomIn, zoomOut, resetTransform, ...rest}) => (
                     <React.Fragment>
-                        <TransformComponent innerRef={rest.ref} wrapperStyle={{ width: '100%', height: '100%', }}>
-                            <div style={{ width: '100%', height: '100%' }}>
+                        <TransformComponent innerRef={rest.ref} wrapperStyle={{width: '100%', height: '100%',}}>
+                            <div style={{width: '100%', height: '100%'}}>
 
                                 <svg
                                     width="100%"
@@ -191,14 +198,14 @@ const HallGenerate = ({ numberRows, numberSeatsInRow, hallOptionPrice, tickets }
                                 >
                                     <defs>
                                         <filter id="dropshadow" height="130%">
-                                            <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
-                                            <feOffset dx="2" dy="2" result="offsetblur" />
+                                            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                                            <feOffset dx="2" dy="2" result="offsetblur"/>
                                             <feComponentTransfer>
-                                                <feFuncA type="linear" slope="0.2" />
+                                                <feFuncA type="linear" slope="0.2"/>
                                             </feComponentTransfer>
                                             <feMerge>
-                                                <feMergeNode />
-                                                <feMergeNode in="SourceGraphic" />
+                                                <feMergeNode/>
+                                                <feMergeNode in="SourceGraphic"/>
                                             </feMerge>
                                         </filter>
                                     </defs>
@@ -219,35 +226,41 @@ const HallGenerate = ({ numberRows, numberSeatsInRow, hallOptionPrice, tickets }
 
             {selectedSeats.length > 0 && (
                 <Space
-                visible
-                direction="horizontal"
-                style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    right: 5,
-                    zIndex: 1,
-                    padding: '10px',
-                    background: '#f0f0f0',
+                    visible
+                    direction="horizontal"
+                    style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 5,
+                        zIndex: 1,
+                        padding: '10px',
+                        background: '#f0f0f0',
 
-                }}
-            >
-                <Title level={4}>{selectedSeats.length} {selectedSeats.length > 1 ? 'билетов' : 'билет'}: {sum} ₽</Title>
+                    }}
+                >
+                    <Title
+                        level={4}>{selectedSeats.length} {selectedSeats.length === 1 ? 'билет' : selectedSeats.length > 1 && selectedSeats.length < 5 ? 'билета' : 'билетов'}: {sum} ₽</Title>
                     <Button
                         type="primary"
                         shape="round"
                         size="large"
                         style={{
-                            backgroundColor:'#722ed1',
+                            backgroundColor: '#722ed1',
                             fontSize: '1.5em',
                             padding: '12px 20px',
                             display: 'flex', // добавляем flex-контейнер
                             alignItems: 'center', // выравниваем по центру по вертикали
                             justifyContent: 'center' // выравниваем по центру по горизонтали
                         }}
+                        onClick={() => {
+
+                            hall.setSelectedSeats(selectedSeats);
+                            navigate(BOOKING_ROUTE +'/' +id);
+                        }}
                     >
                         Далее
                     </Button>
-            </Space>)}
+                </Space>)}
         </div>
     );
 };

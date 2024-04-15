@@ -28,7 +28,9 @@ const EntranceLine = ({thisEntranceOption}) => {
             counter < 10
         ) {
             setCounter(counter + 1);
-            addTicket(thisEntranceOption.entranceOptionPrice.id, event, hall);
+            //addTicket(thisEntranceOption.entranceOptionPrice.id, event, hall);
+            addTicket( event, hall, thisEntranceOption.entranceOptionPrice.id);
+            console.log(hall.ticket)
         } else {
             setDisable(true);
         }

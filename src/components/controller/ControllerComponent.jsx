@@ -5,6 +5,7 @@ import {Alert, Button, Input, Space} from "antd";
 import Carouselcontroller from "./Carouselcontroller";
 import CheckCardController from "./CheckCardController";
 import Title from "antd/es/typography/Title";
+import {observer} from "mobx-react-lite";
 
 const ControllerComponent = () => {
     const [ticketNumber, setTicketNumber] = useState('');
@@ -66,4 +67,4 @@ const ControllerComponent = () => {
     );
 };
 
-export default ControllerComponent;
+export default observer(ControllerComponent);

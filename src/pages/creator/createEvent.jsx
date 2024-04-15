@@ -68,9 +68,7 @@ const props = {
     },
 };
 
-function Label(props: { children: ReactNode }) {
-    return null;
-}
+
 
 const CreateEvent = () => {
 

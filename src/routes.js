@@ -1,5 +1,5 @@
 import {
-    ADMIN_ROUTE, CONTROLLER_CREATOR_ROUTE, CONTROLLER_ROUTE, CREATEEVENT_ROUTE,
+    ADMIN_ROUTE, BOOKING_ROUTE, CONTROLLER_CREATOR_ROUTE, CONTROLLER_ROUTE, CREATEEVENT_ROUTE,
     CREATOR_ROUTE, CREATORINFO_ROUTE, CREATORREGIST_ROUTE,
     EVENT_ROUTE, HALL_ROUTE,
     HOME_ROUTE,
@@ -21,6 +21,7 @@ import TicketCheck from "./pages/creator/ticketCheck";
 import CreateEvent from "./pages/creator/createEvent";
 import ControllerCreator from "./pages/creator/controllerCreator";
 import ControllerPage from "./pages/controller/ControllerPage";
+import Booking from "./pages/event/Booking";
 
 export const  userRoutes = [
 
@@ -28,6 +29,7 @@ export const  userRoutes = [
         path: USER_ROUTE,
         Component: User
     },
+
 ]
 
 
@@ -74,6 +76,14 @@ export  const publicRoutes = [
         path: HOME_ROUTE,
         Component:Home
     },
+    {
+        path: CREATORREGIST_ROUTE,
+        Component: CreatorRegist
+    }
+
+]
+export  const registrationRoutes = [
+
 
     {
         path: EVENT_ROUTE + '/:id',
@@ -84,12 +94,12 @@ export  const publicRoutes = [
         Component: Hall
     },
     {
-        path: CREATORREGIST_ROUTE,
-        Component: CreatorRegist
-    },
-    {
         path: ORDER_ROUTE + '/:id',
         Component: Order
+    },
+    {
+        path: BOOKING_ROUTE+ '/:id',
+        Component: Booking
     },
 
 ]

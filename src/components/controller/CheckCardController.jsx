@@ -70,7 +70,7 @@ const CheckCardController = ({ style }) => {
                     </Title>
                 </Space>
 
-                <Space>
+                {ticket.controllerTicket.entranceOptionPrice && (<Space>
                     <Title level={4} type="secondary">
                         вид:
                     </Title>
@@ -78,7 +78,7 @@ const CheckCardController = ({ style }) => {
                         {ticket.controllerTicket.entranceOptionPrice.entranceOption.name}
                     </Title>
 
-                </Space>
+                </Space>)}
 
                 {ticket.controllerTicket.row && (<Space>
                     <Title level={4} type="secondary">

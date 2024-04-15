@@ -65,31 +65,42 @@ const Ticket = ({order}) => {
 
             <Page orientation="landscape" size="A4" style={styles.page} wrap={false}>
                 <View style={styles.section}>
-                    <Text style={{fontSize: 28}}>{ticket.event.title}</Text>
+                    <Text style={{fontSize: 28}}>{ticket.title}</Text>
                     <Line style={styles.line}/>
                     <Text style={{fontSize: 14, color:'gray', flex: 1}}>
                         {" Адрес: "}
                         <Text style={{ color: 'black'}}>
-                            {ticket.entranceOptionPrice.entranceOption.entrance.name} ({ticket.entranceOptionPrice.entranceOption.entrance.address})
+                            {ticket.venueName} ({ticket.venueAddress})
                         </Text>
                     </Text>
                     <Text style={{fontSize: 14, color:'gray', flex: 1}}>
                         {"Дата и время: "}
                         <Text style={{ color: 'black'}}>
-                            {moment(ticket.event.dateTime).locale('ru').format('DD MMMM HH:mm ddd ')}
+                            {moment(ticket.dateTime).locale('ru').format('DD MMMM HH:mm ddd ')}
                         </Text>
                     </Text>
+                    {ticket.row && ticket.seat && (<Text style={{fontSize: 14, color:'gray', flex: 1}}>
+                        {"Ряд: "}
+                        <Text style={{ color: 'black'}}>
+                            {ticket.row}
+                        </Text>
+                        {" Место: "}
+                        <Text style={{ color: 'black'}}>
+                           {ticket.seat}
+                        </Text>
+
+                    </Text>)}
                     <Text style={{fontSize: 14, color:'gray', flex: 1}}>
                         {"Стоимость: "}
                         <Text style={{ color: 'black'}}>
-                            {ticket.entranceOptionPrice.price} руб.
+                            {ticket.optionPrice} руб.
                         </Text>
                     </Text>
 
                     <Text style={{fontSize: 14, color:'gray', flex: 1}}>
-                        Категория:
+                        {"Категория: "}
                         <Text style={{ color: 'black'}}>
-                            {ticket.entranceOptionPrice.entranceOption.name}
+                             {ticket.optionName}
                         </Text>
                     </Text>
                     <Text style={{fontSize: 12, flex: 1, textAlign: 'center'}}>

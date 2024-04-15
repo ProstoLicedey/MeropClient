@@ -1,13 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import {Alert, Button, Flex, Input, Segmented, Space, Tabs, Typography} from 'antd';
-import { getTicket } from '../../http/ticketAPI';
-import { Context } from '../../index';
+
 import { observer } from 'mobx-react-lite';
-import Carouselcontroller from "../../components/controller/Carouselcontroller";
-import CheckCardController from "../../components/controller/CheckCardController";
+
 import ControllerComponent from "../../components/controller/ControllerComponent";
-import CreateEntrance from "../../components/creator/ModalZal/createEntrance";
-import CreateZal from "../../components/creator/ModalZal/createZal";
+
 import MyController from "../../components/creator/Controller/MyController";
 
 const { Title } = Typography;

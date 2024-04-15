@@ -24,10 +24,11 @@ const DrawerBuy = ({open, onClose, entranceId}) => {
         const  formData = new FormData
         formData.append('userId', user.user.id)
         formData.append('tickets', JSON.stringify(hall.ticket))
+
         createOrder(formData).then(data => {
            navigate(ORDER_ROUTE+ '/' + data.id)
 
-        })
+        }).finally(hall.setTicket([]))
     };
 
     return (
