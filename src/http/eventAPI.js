@@ -68,3 +68,12 @@ export const fetchOneEvent = async (id) => {
     const {data} = await $host.get('api/event/' + id)
     return data
 }
+
+export  const  deleteEvent = async (id) =>{
+    const  {data} = await $host.delete('api/event/' , {
+        params: {
+            id
+        }
+    });
+    return data
+}

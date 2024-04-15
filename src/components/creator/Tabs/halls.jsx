@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Button, Input, Space, Spin, Table} from "antd";
+import {Button, Input, notification, Popconfirm, Space, Spin, Table} from "antd";
 import Title from "antd/es/typography/Title";
 import {CREATEEVENT_ROUTE} from "../../../utils/consts";
 import ModalZal from "../ModalZal/ModalZal";
@@ -8,8 +8,9 @@ import {SearchOutlined} from "@ant-design/icons";
 import creator from "../../../pages/creator/creator";
 import {Context} from "../../../index";
 import {useNavigate} from "react-router-dom";
-import {fetchUserHall} from "../../../http/hallAPI";
+import {deleteHall, fetchUserHall} from "../../../http/hallAPI";
 import {observer} from "mobx-react-lite";
+import {deleteEvent} from "../../../http/eventAPI";
 
 const Halls = () => {
     const navigate = useNavigate()
@@ -22,18 +23,20 @@ const Halls = () => {
     const searchInput = useRef(null);
     const {user, creator} = useContext(Context);
     const [loading, setLoading] = useState(true)
+    const [update, setUpdate] = useState(1)
+    const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
-        if(!!user.user) {
-            fetchUserHall(user.user.id).then(data => creator.setHalls(data)).finally(()=> setLoading(false));
+        if (!!user.user) {
+            fetchUserHall(user.user.id).then(data => creator.setHalls(data)).finally(() => setLoading(false));
         }
 
-    }, [user.user, modal]);
+    }, [user.user, modal, update]);
 
-    if (loading){
+    if (loading) {
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <Spin size="large" />
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+                <Spin size="large"/>
             </div>
         )
     }
@@ -48,12 +51,30 @@ const Halls = () => {
         setSearchText('');
     };
 
-    const onRowClick = (record) => {
-        navigate(CREATEEVENT_ROUTE + '/' + record.id)
-    };
+
+
+    const confirmOneGood = (id, type) => {
+        deleteHall(id, type)
+            .then(() => {
+                setUpdate(update + 1)
+                return api.success({
+                    message: 'Внимание!',
+                    description: 'Контроллер успешно удален!',
+                    className: 'custom-class',
+                    style: {
+                        width: 600
+                    }
+                })
+            })
+            .catch(error => {
+                return api['error']({
+                    message: 'Ошибка ' + error,
+                });
+            });
+    }
 
     const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}) => (
             <div
                 style={{
 
@@ -76,7 +97,7 @@ const Halls = () => {
                     <Button
                         type="primary"
                         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                        icon={<SearchOutlined />}
+                        icon={<SearchOutlined/>}
                         size="small"
                         style={{
                             width: 90,
@@ -157,35 +178,53 @@ const Halls = () => {
             sorter: (a, b) => a.address.length - b.address.length,
             sortDirections: ['descend', 'ascend'],
         },
+        {
+            key: 'actions',
+            render: (record) => {
+                return (
+                    <Space size="large" style={{
+                        display: "flex",
+                        flexFlow: "column"
+                    }}>
+                        <Button style={{
+                            borderColor: 'green',
+                            color: 'green'
+                        }}
+                                onClick={() => {
+                                    // return showModal(record.id)
+                                }}>
+                            Изменить
+                        </Button>
+                        <Popconfirm
+                            title="Вы уверены, что хотите удалить зал? Все мероприятия с этим залом также удалены!"
+                            onConfirm={() => confirmOneGood(record.id, record.type)}
+                            okText="Удалить"
+                            cancelText="Отмена">
+                            <Button danger>Удалить</Button>
+                        </Popconfirm>
+                    </Space>
+                )
+            }
+        }
     ];
 
-    const tableProps = {
-        columns,
-        dataSource: creator.events,
-        onRow: (record) => ({
-            onClick: () => onRowClick(record),
-        }),
-    };
-
     return (
-            <Space direction="vertical" style={{ textAlign: 'left', width: '90%', backgroundColor:'white', margin:10}}>
-                <Title level={2}>
-                    Залы
-                </Title>
-                <Button type="primary" style={{ backgroundColor: '#722ed1' }} onClick={() =>setModal(true)}>
-                    Добавить +
-                </Button>
+        <Space direction="vertical" style={{textAlign: 'left', width: '90%', backgroundColor: 'white', margin: 10}}>
+            <Title level={2}>
+                Залы
+            </Title>
+            <Button type="primary" style={{backgroundColor: '#722ed1'}} onClick={() => setModal(true)}>
+                Добавить +
+            </Button>
 
-                <Table style={{cursor:'pointer'}} columns={columns} dataSource={creator.halls}
-                    //    onRow = {(record) => ({
-                    // onClick: () => onRowClick(record)})}
-                />
+            <Table style={{cursor: 'pointer'}} columns={columns} dataSource={creator.halls}
+            />
 
-                <ModalZal open={modal}
-                          onCancel={() => {
-                              setModal(false);
-                          }}/>
-            </Space>
+            <ModalZal open={modal}
+                      onCancel={() => {
+                          setModal(false);
+                      }}/>
+        </Space>
 
     );
 };

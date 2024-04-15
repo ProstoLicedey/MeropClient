@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Button, Card, Flex, Form, Input, InputNumber, Space, Typography} from "antd";
-import {CloseOutlined} from "@ant-design/icons";
+import {CloseOutlined, QuestionOutlined, SearchOutlined} from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import onCreate from "../../../services/userService/authService";
 import {createEntrance} from "../../../http/entranceAPI";
@@ -42,18 +42,6 @@ const CreateEntrance = ({Close}) => {
             title="Входные билеты"
         >
             <Form.Item
-                label="Адрес площадки"
-                name="address"
-                rules={[
-                    {
-                        required: true,
-                        message: 'Поле не должно быть пустым',
-                    },
-                ]}
-            >
-                <Input/>
-            </Form.Item>
-            <Form.Item
                 label="Название площадки"
                 name="name"
                 rules={[
@@ -65,7 +53,22 @@ const CreateEntrance = ({Close}) => {
             >
                 <Input/>
             </Form.Item>
-
+            <Form.Item
+                label="Адрес площадки"
+                name="address"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Поле не должно быть пустым',
+                    },
+                ]}
+            >
+                <Input/>
+            </Form.Item>
+            <Space direction={"horizontal"}>
+                <Title level={4}>Категории</Title>
+                <Button style={{marginBottom:10}} shape="circle" size={"small"} icon={<QuestionOutlined/>}/>
+            </Space>
             <Form.List name="option" onInput={sum}>
                 {(fields, {add, remove}) => (
                     <div
@@ -147,16 +150,16 @@ const CreateEntrance = ({Close}) => {
                             form
                                 .validateFields()
                                 .then((values) => {
-                                    const userId = user.user.id;
-                                    values.userId = userId;
+                                        const userId = user.user.id;
+                                        values.userId = userId;
                                         createEntrance(values).then(response => {
-                                        if (response.id) {
-                                            Close()
-                                            form.resetFields();
-                                        } else {
-                                            console.error("Error server");
-                                        }
-                                    })
+                                            if (response.id) {
+                                                Close()
+                                                form.resetFields();
+                                            } else {
+                                                console.error("Error server");
+                                            }
+                                        })
                                     }
                                 )
                                 .catch((error) => {

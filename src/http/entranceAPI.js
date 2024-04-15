@@ -5,12 +5,12 @@ export  const  getEntrance = async (id, eventId) =>{
     const  {data} = await $host.get('api/entrance/option/' + id, {params: {eventId}} )
     return data
 }
-export  const  getEntranceUser = async (id) =>{
+export  const  getEntranceHallUser = async (id) =>{
     const  {data} = await $host.get('api/entrance/user/' + id, )
     return data
 }
-export  const  getOneEntrance = async (id) =>{
-    const  {data} = await $host.get('api/entrance/' + id, )
+export  const  getOneEntranceHall = async (id,type) =>{
+    const  {data} = await $host.get('api/entrance/' + id, {params: {type}})
     return data
 }
 export  const  createEntrance = async (entrance) =>{

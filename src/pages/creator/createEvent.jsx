@@ -11,7 +11,7 @@ import {
     TreeSelect, Typography, Upload,
 } from 'antd';
 import Title from "antd/es/typography/Title";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {observer} from "mobx-react-lite";
 import TextArea from "antd/es/input/TextArea";
 import {CheckOutlined, CloseOutlined, UploadOutlined} from "@ant-design/icons";
@@ -23,9 +23,16 @@ import EventItem from "../../components/home/EventItem";
 import CreateZal from "../../components/creator/ModalZal/createZal";
 import CreateEntrance from "../../components/creator/ModalZal/createEntrance";
 import ModalZal from "../../components/creator/ModalZal/ModalZal";
-import {createEntrance, getEntranceUser, getOneEntrance} from "../../http/entranceAPI";
+import {
+    createEntrance,
+    getEntranceHallUser,
+    getEntranceUser,
+    getOneEntrance,
+    getOneEntranceHall
+} from "../../http/entranceAPI";
 import {values} from "mobx";
 import {SmartCaptcha} from "@yandex/smart-captcha";
+import {CREATOR_ROUTE, HALL_ROUTE} from "../../utils/consts";
 
 const {Text} = Typography;
 
@@ -84,6 +91,7 @@ const CreateEvent = () => {
     const titleText = id == undefined ? "Создание мероприятия" : "Редактирование мероприятия";
     const [fileList, setFileList] = React.useState([]);
     const [captch_check, setCaptch_check] = useState(false);
+    const navigate = useNavigate()
 
     useEffect(() => {
 
@@ -93,7 +101,7 @@ const CreateEvent = () => {
     useEffect(() => {
         fetchTypes().then(data => event.setTypes(data))
         fetchRating().then(data => event.setRatings(data))
-        getEntranceUser(user.user.id).then(data => creator.setEntranceAll(data))
+        getEntranceHallUser(user.user.id).then(data => creator.setEntranceAll(data))
     }, [modal]);
 
     const handleUpload = ({file}) => {
@@ -109,14 +117,15 @@ const CreateEvent = () => {
         }
         return e?.fileList.slice(-1); // Ensure only the last uploaded file is kept
     };
-    const selectEntrance = (value) => {
+    const selectEntranceHall = (value, type) => {
+        console.log(type)
         if (value == 'new') {
             setModal(true)
             setSelectedValue(null);
             return
         }
         setSelectedValue(value);
-        getOneEntrance(value).then(data => {
+        getOneEntranceHall(value, type).then(data => {
                 creator.setEntrance(data)
                 if (creator.entrance.entranceOptions) {
                     // Обновляем значения формы на основе обновленных entranceOptions
@@ -294,7 +303,7 @@ const CreateEvent = () => {
                     <Select
                         style={{width: '100%', maxWidth: 400}}
                         showSearch
-                        onChange={(value) => selectEntrance(value)}  // Corrected line
+                        onChange={(value, option) => selectEntranceHall(value, option.type)}
                         placeholder="Выбрать схему продаж"
                         value={selectedValue}
                         optionFilterProp="children"
@@ -397,7 +406,8 @@ const CreateEvent = () => {
                                             form.validateFields()
                                                 .then(() => {
                                                     if (captch_check) {
-                                                        createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue());
+                                                        createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue())
+                                                            .then(() => navigate(CREATOR_ROUTE))
                                                     }
                                                 })
                                                 .catch((error) => {

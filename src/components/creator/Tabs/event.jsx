@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {PlusOutlined, SearchOutlined} from '@ant-design/icons';
-import {Button, Flex, Input, Popconfirm, Space, Spin, Table} from 'antd';
-import {fetchEvent, fetchOneEvent, fetchTypes} from "../../../http/eventAPI";
-import {getEventCreator} from "../../../http/creactorAPI";
+import {Button, Flex, Input, notification, Popconfirm, Space, Spin, Table} from 'antd';
+import {deleteEvent, fetchEvent, fetchOneEvent, fetchTypes} from "../../../http/eventAPI";
+import {deleteController, getEventCreator} from "../../../http/creactorAPI";
 import {Context} from "../../../index";
 import creator from "../../../pages/creator/creator";
 import {observer} from "mobx-react-lite";
@@ -18,15 +18,16 @@ const Event = () => {
     const searchInput = useRef(null);
     const {user, creator} = useContext(Context);
     const [loading, setLoading] = useState(true)
+    const [update, setUpdate] = useState(1)
+    const [api, contextHolder] = notification.useNotification();
+
 
     useEffect(() => {
         if(!!user.user) {
-            console.log(user.user.id)
             getEventCreator(user.user.id).then(data => creator.setEvents(data)).finally(()=> setLoading(false));
-            console.log(creator.events)
         }
 
-    }, [user.user]);
+    }, [user.user, update]);
 
 
         if (loading){
@@ -48,9 +49,27 @@ const Event = () => {
         setSearchText('');
     };
 
-    const onRowClick = (record) => {
-        navigate(CREATEEVENT_ROUTE + '/' + record.id)
-    };
+    //удаление мероприятия
+    const confirmOneGood = (id) => {
+        console.log(id)
+        deleteEvent(id)
+            .then(() => {
+                setUpdate(update + 1)
+                return api.success({
+                    message: 'Внимание!',
+                    description: 'Контроллер успешно удален!',
+                    className: 'custom-class',
+                    style: {
+                        width: 600
+                    }
+                })
+            })
+            .catch(error => {
+                return api['error']({
+                    message: 'Ошибка ' + error,
+                });
+            });
+    }
 
     const getColumnSearchProps = (dataIndex) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
@@ -140,10 +159,18 @@ const Event = () => {
             ...getColumnSearchProps('title'),
         },
         {
+            title: 'Билетов осталось',
+            dataIndex: 'mests',
+            key: 'mests',
+            width: '5%',
+            sorter: (a, b) => a.title.length - b.title.length,
+            ...getColumnSearchProps('title'),
+        },
+        {
             title: 'Место проведения',
             dataIndex: 'address',
             key: 'address',
-            width: '40%',
+            width: '35%',
             ...getColumnSearchProps('address'),
             sorter: (a, b) => a.address.length - b.address.length,
             sortDirections: ['descend', 'ascend'],
@@ -173,8 +200,8 @@ const Event = () => {
                             Изменить
                         </Button>
                         <Popconfirm
-                            title="Вы уверены, что хотите удалить контроллера?"
-                           // onConfirm={() => confirmOneGood(record.controllerId)}
+                            title="Вы уверены, что хотите удалить мероприятие? Все билеты на него будут также удалены!"
+                           onConfirm={() => confirmOneGood(record.id)}
                             okText="Да"
                             cancelText="Отмена">
                             <Button danger>Удалить</Button>
@@ -185,13 +212,7 @@ const Event = () => {
         }
     ];
 
-    const tableProps = {
-        columns,
-        dataSource: creator.events,
-        onRow: (record) => ({
-            onClick: () => onRowClick(record),
-        }),
-    };
+
     return(
 
             <Space direction="vertical" style={{ textAlign: 'left', width: '90%', backgroundColor:'white', margin:10}}>
@@ -202,7 +223,7 @@ const Event = () => {
                     Добавить +
                 </Button>
                <Table style={{cursor:'pointer'}} columns={columns} dataSource={creator.events} onRow = {(record) => ({
-                onClick: () => onRowClick(record)
+                // onClick: () => onRowClick(record)
             })}/>
             </Space>
     );

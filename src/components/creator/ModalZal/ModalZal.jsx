@@ -31,7 +31,7 @@ const ModalZal = ({open, onCancel}) => {
                 {option == 'Входные билеты'?
                     (<CreateEntrance Close={() => onCancel()}/>)
                     :
-                    (<CreateZal/>)
+                    (<CreateZal Close={() => onCancel()}/>)
                 }
 
             </Flex>
