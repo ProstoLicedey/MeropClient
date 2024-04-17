@@ -21,10 +21,10 @@ const Halls = () => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
-    const {user, creator} = useContext(Context);
+    const {user, creator, massage} = useContext(Context);
     const [loading, setLoading] = useState(true)
     const [update, setUpdate] = useState(1)
-    const [api, contextHolder] = notification.useNotification();
+
 
     useEffect(() => {
         if (!!user.user) {
@@ -52,23 +52,23 @@ const Halls = () => {
     };
 
 
-
     const confirmOneGood = (id, type) => {
         deleteHall(id, type)
             .then(() => {
                 setUpdate(update + 1)
-                return api.success({
-                    message: 'Внимание!',
-                    description: 'Контроллер успешно удален!',
-                    className: 'custom-class',
+
+                return notification.success({
+                    message: 'Удалено',
+                    description: 'Зал успешно удален!',
                     style: {
                         width: 600
                     }
                 })
             })
             .catch(error => {
-                return api['error']({
-                    message: 'Ошибка ' + error,
+                return  notification['error']({
+                    message: 'Ошибка ' ,
+                    description: error,
                 });
             });
     }

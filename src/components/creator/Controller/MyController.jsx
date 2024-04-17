@@ -18,7 +18,6 @@ const MyController = () => {
     const [loading, setLoading] = useState(true)
     const [controllers, setControllers] = useState([])
     const [update, setUpdate] = useState(1)
-    const [api, contextHolder] = notification.useNotification();
 
     const [open, setOpen] = useState(false); // модальное окно
 
@@ -33,7 +32,7 @@ const MyController = () => {
         deleteController(id)
             .then(() => {
                 setUpdate(update + 1)
-                return api.success({
+                return notification.success({
                     message: 'Внимание!',
                     description: 'Контроллер успешно удален!',
                     className: 'custom-class',
@@ -43,7 +42,7 @@ const MyController = () => {
                 })
             })
             .catch(error => {
-                return api['error']({
+                return notification['error']({
                     message: 'Ошибка ' + error,
                 });
             });

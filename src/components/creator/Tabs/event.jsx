@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {PlusOutlined, SearchOutlined} from '@ant-design/icons';
-import {Button, Flex, Input, notification, Popconfirm, Space, Spin, Table} from 'antd';
+import {Button, Flex, Input, notification, Popconfirm, Space, Spin, Table, Tooltip} from 'antd';
 import {deleteEvent, fetchEvent, fetchOneEvent, fetchTypes} from "../../../http/eventAPI";
 import {deleteController, getEventCreator} from "../../../http/creactorAPI";
 import {Context} from "../../../index";
@@ -9,6 +9,7 @@ import {observer} from "mobx-react-lite";
 import {useNavigate} from "react-router-dom";
 import {CREATEEVENT_ROUTE, EVENT_ROUTE} from "../../../utils/consts";
 import Title from "antd/es/typography/Title";
+import Link from "antd/es/typography/Link";
 
 const Event = () => {
     const navigate = useNavigate()
@@ -16,27 +17,27 @@ const Event = () => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
-    const {user, creator} = useContext(Context);
+    const {user, creator, notifai} = useContext(Context);
     const [loading, setLoading] = useState(true)
     const [update, setUpdate] = useState(1)
-    const [api, contextHolder] = notification.useNotification();
+    const [archive, setArchive] = useState(false)
 
 
     useEffect(() => {
-        if(!!user.user) {
-            getEventCreator(user.user.id).then(data => creator.setEvents(data)).finally(()=> setLoading(false));
+        if (!!user.user) {
+            getEventCreator(user.user.id, archive).then(data => creator.setEvents(data)).finally(() => setLoading(false));
         }
 
-    }, [user.user, update]);
+    }, [user.user, update, archive]);
 
 
-        if (loading){
-            return (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <Spin size="large" />
-                </div>
-            )
-        }
+    if (loading) {
+        return (
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+                <Spin size="large"/>
+            </div>
+        )
+    }
 
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -55,24 +56,20 @@ const Event = () => {
         deleteEvent(id)
             .then(() => {
                 setUpdate(update + 1)
-                return api.success({
-                    message: 'Внимание!',
-                    description: 'Контроллер успешно удален!',
-                    className: 'custom-class',
-                    style: {
-                        width: 600
-                    }
-                })
+                notifai.type = "success"
+                notifai.message = "Внимание!"
+                notifai.description = 'Контроллер успешно удален!'
+
             })
             .catch(error => {
-                return api['error']({
-                    message: 'Ошибка ' + error,
-                });
+                notifai.type = "error"
+                notifai.message = "Ошибка!"
+                notifai.description = error
             });
     }
 
     const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}) => (
             <div
                 style={{
 
@@ -95,7 +92,7 @@ const Event = () => {
                     <Button
                         type="primary"
                         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                        icon={<SearchOutlined />}
+                        icon={<SearchOutlined/>}
                         size="small"
                         style={{
                             width: 90,
@@ -149,6 +146,7 @@ const Event = () => {
             width: '10%',
             ...getColumnSearchProps('id'),
             sorter: (a, b) => a.id - b.id,
+
         },
         {
             title: 'Название',
@@ -157,6 +155,11 @@ const Event = () => {
             width: '30%',
             sorter: (a, b) => a.title.length - b.title.length,
             ...getColumnSearchProps('title'),
+            render: (text, record) => (
+                <Tooltip title={"Нажмите чтоб перейти к странице мероприятия"}>
+                    <Link onClick={() => navigate(`${EVENT_ROUTE}/${record.id}`)}>{text}</Link>
+                </Tooltip>
+            )
         },
         {
             title: 'Билетов осталось',
@@ -194,38 +197,52 @@ const Event = () => {
                             borderColor: 'green',
                             color: 'green'
                         }}
-                                onClick={() => {
-                                    // return showModal(record.id)
-                                }}>
+                                onClick={() =>
+                                navigate(`${CREATEEVENT_ROUTE}/${record.id}`)
+                                }>
                             Изменить
                         </Button>
                         <Popconfirm
                             title="Вы уверены, что хотите удалить мероприятие? Все билеты на него будут также удалены!"
-                           onConfirm={() => confirmOneGood(record.id)}
+                            onConfirm={() => confirmOneGood(record.id)}
                             okText="Да"
                             cancelText="Отмена">
                             <Button danger>Удалить</Button>
                         </Popconfirm>
                     </Space>
                 )
-            }
+            },
+            // Условие для отображения столбца только когда archive === false
+            ...(archive
+                ? {
+                    // Если archive === true, не добавляем этот столбец
+                    hidden: true
+                }
+                : {})
         }
     ];
 
 
-    return(
+    return (
 
-            <Space direction="vertical" style={{ textAlign: 'left', width: '90%', backgroundColor:'white', margin:10}}>
-                <Title level={2}>
-                    Мероприятия
-                </Title>
-                <Button type="primary" style={{ backgroundColor: '#722ed1' }} onClick={() =>navigate(CREATEEVENT_ROUTE)}>
+        <Space direction="vertical" style={{textAlign: 'left', width: '90%', backgroundColor: 'white', margin: 10}}>
+            <Title level={2}>
+                {archive? "Архив мероприятий" : "Мероприятия" }
+            </Title>
+            <Space direction={'horizontal'}>
+                <Button type="primary" style={{backgroundColor: '#722ed1'}} onClick={() => navigate(CREATEEVENT_ROUTE)}>
                     Добавить +
                 </Button>
-               <Table style={{cursor:'pointer'}} columns={columns} dataSource={creator.events} onRow = {(record) => ({
+                <Tooltip title={archive? "Просмотреть aктуальные мероприятия" : "Просмотреть архив прошедших мероприятий"}>
+                    <Button onClick={()=> setArchive(!archive)} type="link">
+                        {archive? "Акуальные мероприятия" : "Архив" }
+                    </Button>
+                </Tooltip>
+            </Space>
+            <Table style={{cursor: 'pointer'}} columns={columns} dataSource={creator.events} onRow={(record) => ({
                 // onClick: () => onRowClick(record)
             })}/>
-            </Space>
+        </Space>
     );
 };
 export default observer(Event);

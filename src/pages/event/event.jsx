@@ -70,6 +70,8 @@ const Event = () => {
                             <Tag style={{fontWeight: 'bold'}} bordered={false}>
                                 {event.event.type ? event.event.type.name : null}
                             </Tag>
+                            {new Date(event.event.dateTime) < new Date() && (<Tag color="red">Мероприятие прошло</Tag>)}
+
                         </Row>
                         <Title>{event.event.title}</Title>
                         <AddressLink
@@ -106,7 +108,7 @@ const Event = () => {
                             </Button>
 
                         </div>
-                        <Space style={{float: 'right'}}>
+                        <Space style={{float: 'right'}} hidden={new Date(event.event.dateTime) < new Date()}>
                             <Button
                                 type="primary"
                                 style={{backgroundColor: '#722ed1',  height: '4em', fontSize:'1.4em'}}

@@ -79,7 +79,11 @@ export  const publicRoutes = [
     {
         path: CREATORREGIST_ROUTE,
         Component: CreatorRegist
-    }
+    },
+    {
+        path: EVENT_ROUTE + '/:id',
+        Component: Event
+    },
 
 ]
 export  const registrationRoutes = [

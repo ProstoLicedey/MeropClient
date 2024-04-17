@@ -185,6 +185,7 @@ const HallGenerate = ({numberRows, numberSeatsInRow, hallOptionPrice, tickets}) 
                 maxScale={3}
             >
                 {({zoomIn, zoomOut, resetTransform, ...rest}) => (
+
                     <React.Fragment>
                         <TransformComponent innerRef={rest.ref} wrapperStyle={{width: '100%', height: '100%',}}>
                             <div style={{width: '100%', height: '100%'}}>

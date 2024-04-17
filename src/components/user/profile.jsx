@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {Button, Card, DatePicker, Form, Input, message, Tooltip} from 'antd';
+import {Button, Card, DatePicker, Form, Input, message, notification, Tooltip} from 'antd';
 import Title from 'antd/es/typography/Title';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../../index';
@@ -40,13 +40,20 @@ const Profile = () => {
                     email: email,
                     birthday: birthday.format('YYYY-MM-DD'), // Format the date as needed
                 }).then(() => {
-                    message.success('Данные успешно изменены');
+                    return notification.success({
+                        message: 'Данные успешно изменены',
+
+                    })
                 });
 
                 setIsFormChanged(false);
 
             })
             .catch((errorInfo) => {
+                return notification.error({
+                    message: 'Ошибка',
+
+                })
                 console.log('Validation failed:', errorInfo);
             });
 

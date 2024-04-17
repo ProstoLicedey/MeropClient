@@ -170,7 +170,7 @@ const CreateZal = ({Close}) => {
                     },
                 ]}
             >
-                <InputNumber min={1} max={50} defaultValue={10} onChange={(value) => setMaxRows(value)} />
+                <InputNumber min={1} max={50} onChange={(value) => setMaxRows(value)} />
             </Form.Item>
             <Form.Item
                 label="Количество мест"
@@ -182,7 +182,7 @@ const CreateZal = ({Close}) => {
                     },
                 ]}
             >
-                <InputNumber defaultValue={10}min={1} max={50}  onChange={(value) => setMaxSeat(value) }/>
+                <InputNumber  min={1} max={50}  onChange={(value) => setMaxSeat(value) }/>
             </Form.Item>
 
             <Space direction={"horizontal"}>
@@ -284,7 +284,9 @@ const CreateZal = ({Close}) => {
                                     let array = create2DArray(values.row, values.seat);
                                     console.log(values)
                                     values.option.map((op) => {
-                                        array = setRangeToTrue(op.row, op.seat, array);
+                                        const row = op.row ? op.row : [1, values.row];
+                                        const seat = op.seat ? op.seat: [1, values.seat];
+                                        array = setRangeToTrue(row, seat, array);
                                     })
 
 

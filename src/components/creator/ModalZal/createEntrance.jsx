@@ -1,15 +1,23 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Button, Card, Flex, Form, Input, InputNumber, Space, Typography} from "antd";
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {Button, Card, Flex, Form, Input, InputNumber, Space, Tour, Typography} from "antd";
 import {CloseOutlined, QuestionOutlined, SearchOutlined} from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import onCreate from "../../../services/userService/authService";
 import {createEntrance} from "../../../http/entranceAPI";
 import {Context} from "../../../index";
+import HallPhoto from "../../../assets/Hall.png";
+import SliderPhoto from "../../../assets/Slider.png";
 
 
 const CreateEntrance = ({Close}) => {
     const [form] = Form.useForm();
     const {user} = useContext(Context)
+    const [open, setOpen] = useState(false);
+
+    const ref1 = useRef(null);
+    const ref2 = useRef(null);
+    const ref3 = useRef(null);
+
     const sum = () => {
         if (form.getFieldsValue().option === undefined) {
             return;
@@ -25,6 +33,39 @@ const CreateEntrance = ({Close}) => {
 
 
     };
+
+    const steps = [
+        {
+            title: 'Категории',
+            description: 'С помощью категорий можно бронировать билеты разного типа',
+            target: null,
+        },
+        {
+            title: 'Категории',
+            description: 'Например обычныйе билеты, Vip и Фан зона',
+            target: null,
+        },
+        {
+            title: 'Заполнение категорий',
+            description: 'Для добовление категории необходимо внести информацию о ней.',
+            target: () => ref1.current,
+        },
+        {
+            title: 'Заполнение категории',
+            description: 'Необходимо указать название категории и сколько в ней мест',
+            target: () => ref1.current,
+        },
+        {
+            title: 'Добавить категорию',
+            description: 'Если вам нужно больше категорий нажмите на кнопку "Добавить категорию".',
+            target: () => ref2.current,
+        },
+        {
+            title: 'Важно!',
+            description: 'В зале может быть от 1 до 10 категории.',
+            target: null,
+        },
+    ];
 
     return (
 
@@ -67,9 +108,10 @@ const CreateEntrance = ({Close}) => {
             </Form.Item>
             <Space direction={"horizontal"}>
                 <Title level={4}>Категории</Title>
-                <Button style={{marginBottom:10}} shape="circle" size={"small"} icon={<QuestionOutlined/>}/>
+                <Button style={{marginBottom: 10}} shape="circle" size={"small"} onClick={() => setOpen(true)}
+                        icon={<QuestionOutlined/>}/>
             </Space>
-            <Form.List name="option" onInput={sum}>
+            <Form.List name="option" onInput={sum} >
                 {(fields, {add, remove}) => (
                     <div
                         style={{
@@ -80,6 +122,7 @@ const CreateEntrance = ({Close}) => {
                     >
                         {fields.map((field, index) => (
                             <Card
+                                ref={ref1}
                                 size="small"
                                 title={`Категория ${field.name + 1}`}
                                 key={field.key}
@@ -128,18 +171,13 @@ const CreateEntrance = ({Close}) => {
                             </Card>
                         ))}
 
-                        <Button type="dashed" onClick={() => add()} block>
+                        <Button type="dashed" onClick={() => add()} block ref={ref2}>
                             Добавить категорию +
                         </Button>
                     </div>
                 )}
             </Form.List>
 
-            {/*<Form.Item noStyle shouldUpdate>*/}
-            {/*    {() => (*/}
-            {/*       м
-            {/*    )}*/}
-            {/*</Form.Item>*/}
             <Form.Item label="Всего мест" name="totalSeats">
                 <Input disabled/>
             </Form.Item>
@@ -170,6 +208,11 @@ const CreateEntrance = ({Close}) => {
                     Создать
                 </Button>
             </Form.Item>
+
+            <Tour open={open}
+                  onClose={() => setOpen(false)}
+                  steps={steps}
+            />
         </Form>
     );
 };

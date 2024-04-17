@@ -14,7 +14,7 @@ export const fetchRating = async () => {
     return data
 }
 
-export const createEvent = async (event, userId, file, option) => {
+export const createEvent = async (event, userId, file, option, type) => {
 
     try {
         const formData = new FormData();
@@ -25,6 +25,7 @@ export const createEvent = async (event, userId, file, option) => {
         formData.append('ageRatingId', event.ageRatingId);
         formData.append('userId', userId);
         formData.append('img', file);
+        formData.append('type', type);
         const optionString = JSON.stringify(option.entrances);
 
         // Добавляем JSON-строку в FormData

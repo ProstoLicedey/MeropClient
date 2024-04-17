@@ -1,4 +1,4 @@
-import {Layout, Spin, theme} from 'antd';
+import {Layout, notification, Spin, theme} from 'antd';
 import AppRouter from "./components/AppRouter";
 import 'antd/dist/reset.css';
 import HeaderPage from "./components/header/Header";
@@ -18,7 +18,6 @@ const App = observer (() =>  {
     const {
         token: {colorBgContainer},
     } = theme.useToken();
-
 
 
     useEffect(() => {

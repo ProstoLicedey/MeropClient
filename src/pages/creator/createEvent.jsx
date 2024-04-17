@@ -6,7 +6,7 @@ import {
     Form,
     Input,
     InputNumber,
-    Mentions, message, Row, Segmented,
+    Mentions, message, notification, Row, Segmented,
     Select, Space, Switch, Tooltip,
     TreeSelect, Typography, Upload,
 } from 'antd';
@@ -76,7 +76,6 @@ const props = {
 };
 
 
-
 const CreateEvent = () => {
 
 
@@ -90,7 +89,7 @@ const CreateEvent = () => {
     const [formEvent] = Form.useForm();
     const titleText = id == undefined ? "Создание мероприятия" : "Редактирование мероприятия";
     const [fileList, setFileList] = React.useState([]);
-    const [captch_check, setCaptch_check] = useState(false);
+    const [captch_check, setCaptch_check] = useState(!!id);
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -271,8 +270,7 @@ const CreateEvent = () => {
                         >
                             <Select options={event.ratings}/>
                         </Form.Item>
-
-                        <Form.Item
+                        {!id &&(<Form.Item
                             label="Проверка"
                             name="captcha"
                             rules={[
@@ -291,7 +289,7 @@ const CreateEvent = () => {
 
                             />
                         </Form.Item>
-
+                        )}
                     </Form>
                 </Space>
             </Col>
@@ -313,12 +311,12 @@ const CreateEvent = () => {
                             ...creator.entranceAll
                         ]}
                     />
-                    {creator.entrance?.entranceOptions && (
+                    {creator.entrance?.options && (
                         <Form
                             form={form}
 
                             initialValues={{
-                                entrances: creator.entrance.entranceOptions?.map((entrance) => ({
+                                entrances: creator.entrance.options?.map((entrance) => ({
                                     id: entrance.id,
                                     switchState: switchStates[entrance.id] === undefined ? true : switchStates[entrance.id],
                                 })),
@@ -343,20 +341,20 @@ const CreateEvent = () => {
                                                     <Tooltip title="Убрать категорию в этом мероприятие ">
                                                         <div style={{position: 'absolute', top: 0, right: 3}}>
                                                             <Form.Item name={[name, 'switchState']}>
-                                                            <Switch
-                                                                defaultChecked={true}
-                                                                size="small"
-                                                                {...restField}
-                                                                checked={switchStates[name]}
-                                                                onChange={(checked) => {
-                                                                    setSwitchStates((prevStates) => ({
-                                                                        ...prevStates,
-                                                                        [name]: checked
-                                                                    }))
+                                                                {creator.entrance.type == 'Entrance' && (<Switch
+                                                                    defaultChecked={true}
+                                                                    size="small"
+                                                                    {...restField}
+                                                                    checked={switchStates[name]}
+                                                                    onChange={(checked) => {
+                                                                        setSwitchStates((prevStates) => ({
+                                                                            ...prevStates,
+                                                                            [name]: checked
+                                                                        }))
 
-                                                                }
-                                                                }
-                                                            />
+                                                                    }
+                                                                    }
+                                                                />)}
                                                             </Form.Item>
                                                         </div>
                                                     </Tooltip>
@@ -365,12 +363,12 @@ const CreateEvent = () => {
                                                         <Col span={8}>
                                                             <Title level={4}
                                                                    style={{marginRight: '16px', textAlign: 'left'}}>
-                                                                {creator.entrance.entranceOptions[name].name}
+                                                                {creator.entrance.options[name].name}
                                                             </Title>
                                                         </Col>
                                                         <Col span={7}>
                                                             <Text
-                                                                type="secondary">Мест: {creator.entrance.entranceOptions[name].totalSeats}</Text>
+                                                                type="secondary">Мест: {creator.entrance.options[name].totalSeats}</Text>
                                                         </Col>
                                                         <Col span={8}>
                                                             <Form.Item name={[name, 'price']}>
@@ -406,8 +404,12 @@ const CreateEvent = () => {
                                             form.validateFields()
                                                 .then(() => {
                                                     if (captch_check) {
-                                                        createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue())
-                                                            .then(() => navigate(CREATOR_ROUTE))
+                                                        createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue(), creator.entrance.type)
+                                                            .then((response) =>{
+                                                                navigate(CREATOR_ROUTE)
+
+
+                                                            })
                                                     }
                                                 })
                                                 .catch((error) => {

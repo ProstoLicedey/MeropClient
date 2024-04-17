@@ -20,8 +20,6 @@ const EntranceLine = ({thisEntranceOption}) => {
         }
     };
 
-    const [api, contextHolder] = notification.useNotification();
-
     const counterPlus = () => {
         if (
             counter < thisEntranceOption.entranceOptionPrice.seatsLeft &&

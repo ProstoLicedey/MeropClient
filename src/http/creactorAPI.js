@@ -1,10 +1,11 @@
 import {$authHost, $host} from "./index";
 
 
-export  const  getEventCreator = async (userId) =>{
+export  const  getEventCreator = async (userId, archive) =>{
     const  {data} = await $host.get('api/event/creator' , {
         params: {
-            userId
+            userId,
+            archive
         }
     });
     return data
