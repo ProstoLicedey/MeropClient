@@ -1,12 +1,10 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useLayoutEffect, useState} from 'react';
 import {
-    Button, Card,
-    Cascader, Col, ConfigProvider,
-    DatePicker, Divider, Empty, Flex,
+    Button, Card, Col, ConfigProvider,
+    DatePicker,
     Form,
     Input,
-    InputNumber,
-    Mentions, message, notification, Row, Segmented,
+    message, notification, Row,
     Select, Space, Switch, Tooltip,
     TreeSelect, Typography, Upload,
 } from 'antd';
@@ -14,26 +12,20 @@ import Title from "antd/es/typography/Title";
 import {useNavigate, useParams} from "react-router-dom";
 import {observer} from "mobx-react-lite";
 import TextArea from "antd/es/input/TextArea";
-import {CheckOutlined, CloseOutlined, UploadOutlined} from "@ant-design/icons";
+import {UploadOutlined} from "@ant-design/icons";
 import ruRU from "antd/es/locale/ru_RU";
 import {Context} from "../../index";
-import {createEvent, fetchRating, fetchTypes} from "../../http/eventAPI";
-import Link from "antd/es/typography/Link";
-import EventItem from "../../components/home/EventItem";
-import CreateZal from "../../components/creator/ModalZal/createZal";
-import CreateEntrance from "../../components/creator/ModalZal/createEntrance";
+import {createEvent, fetchRating, fetchTypes, getEventForUpdate, updateEvent} from "../../http/eventAPI";
 import ModalZal from "../../components/creator/ModalZal/ModalZal";
 import {
-    createEntrance,
     getEntranceHallUser,
-    getEntranceUser,
-    getOneEntrance,
     getOneEntranceHall
 } from "../../http/entranceAPI";
-import {values} from "mobx";
 import {SmartCaptcha} from "@yandex/smart-captcha";
-import {CREATOR_ROUTE, HALL_ROUTE} from "../../utils/consts";
-
+import {CREATOR_ROUTE} from "../../utils/consts";
+import moment from "moment";
+import dayjs from "dayjs";
+import 'dayjs/locale/ru'; // Подключаем локаль ru
 const {Text} = Typography;
 
 
@@ -57,28 +49,10 @@ const formItemLayout = {
     },
 };
 
-const props = {
-    name: 'file',
-    action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
-    headers: {
-        authorization: 'authorization-text',
-    },
-    onChange(info) {
-        if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList);
-        }
-        if (info.file.status === 'done') {
-            message.success(`${info.file.name} файл загружен`);
-        } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} ошибка`);
-        }
-    },
-};
-
 
 const CreateEvent = () => {
-
-
+    dayjs.locale('ru');
+    const today = dayjs();
     const {id} = useParams();
     const {event, creator, user} = useContext(Context)
     const [fileUploaded, setFileUploaded] = useState(false);
@@ -90,53 +64,81 @@ const CreateEvent = () => {
     const titleText = id == undefined ? "Создание мероприятия" : "Редактирование мероприятия";
     const [fileList, setFileList] = React.useState([]);
     const [captch_check, setCaptch_check] = useState(!!id);
+
+
     const navigate = useNavigate()
-
-    useEffect(() => {
-
-    }, [creator.entrance]); // Срабатывает при изменении creator.entrance
 
 
     useEffect(() => {
         fetchTypes().then(data => event.setTypes(data))
         fetchRating().then(data => event.setRatings(data))
         getEntranceHallUser(user.user.id).then(data => creator.setEntranceAll(data))
+
+
     }, [modal]);
+
+
+    useEffect(() => {
+        if (!!id) {
+            getEventForUpdate(id, user.user.id).then(data => {
+                const formattedDate = moment(data.dateTime);
+                formEvent.setFieldsValue({
+                    title: data.title,
+                    description: data.description,
+                    dateTime: formattedDate,
+                    typeId: data.typeId,
+                    ageRatingId: data.ageRatingId
+                });
+                setFileList(data.img ? [{
+                    uid: '-1',
+                    name: 'Изображение мероприятия',
+                    status: 'done',
+                    url: process.env.REACT_APP_API_URL + data.img
+                }] : []);
+
+                const hall = data.hallId ? data.hallId : (data.entranceId ? data.entranceId : null);
+                selectEntranceHall(hall, data.type, data.option)
+
+            }).catch(error => {
+                return notification.error({
+                    message: 'Ошибка получения мероприятия',
+                    description: error,
+
+                })
+            });
+        }
+    }, []);
+
 
     const handleUpload = ({file}) => {
         setFileList([file]);
         return false;
     };
 
-    const normFile = (e) => {
-        if (Array.isArray(e)) {
-            const fileList = e;
-            setFileUploaded(fileList.length > 0); // Update state based on whether a file is present
-            return fileList;
-        }
-        return e?.fileList.slice(-1); // Ensure only the last uploaded file is kept
-    };
-    const selectEntranceHall = (value, type) => {
-        console.log(type)
+
+    const selectEntranceHall = (value, type, option) => {
         if (value == 'new') {
             setModal(true)
             setSelectedValue(null);
             return
         }
         setSelectedValue(value);
+
         getOneEntranceHall(value, type).then(data => {
                 creator.setEntrance(data)
-                if (creator.entrance.entranceOptions) {
+                if (creator.entrance.options) {
                     // Обновляем значения формы на основе обновленных entranceOptions
                     form.setFieldsValue({
-                        entrances: creator.entrance?.entranceOptions.map((entrance) => ({
+                        entrances: creator.entrance?.options.map((entrance, index) => ({
                             id: entrance.id,
                             switchState: switchStates[entrance.id] === undefined ? true : switchStates[entrance.id],
+                            price: option ? option[index]?.price : ''
                         })),
                     });
                 }
             }
         )
+
     };
     const beforeUpload = async (file) => {
         const isImage = file.type.startsWith('image/');
@@ -209,6 +211,7 @@ const CreateEvent = () => {
                         </Form.Item>
                         <ConfigProvider locale={ruRU}>
                             <Form.Item
+
                                 label="Дата и время"
                                 name="dateTime"
                                 rules={[
@@ -221,7 +224,7 @@ const CreateEvent = () => {
 
                             >
 
-                                <DatePicker showTime format="YYYY-MM-DD HH:mm" style={{width: '100%'}}/>
+                                <DatePicker minDate={today} showTime format="YYYY-MM-DD HH:mm" style={{width: '100%'}}/>
 
                             </Form.Item>
                         </ConfigProvider>
@@ -270,7 +273,7 @@ const CreateEvent = () => {
                         >
                             <Select options={event.ratings}/>
                         </Form.Item>
-                        {!id &&(<Form.Item
+                        {!id && (<Form.Item
                             label="Проверка"
                             name="captcha"
                             rules={[
@@ -288,8 +291,7 @@ const CreateEvent = () => {
 
 
                             />
-                        </Form.Item>
-                        )}
+                        </Form.Item>)}
                     </Form>
                 </Space>
             </Col>
@@ -298,19 +300,22 @@ const CreateEvent = () => {
                     <Title level={4}>
                         Схема продажи
                     </Title>
-                    <Select
-                        style={{width: '100%', maxWidth: 400}}
-                        showSearch
-                        onChange={(value, option) => selectEntranceHall(value, option.type)}
-                        placeholder="Выбрать схему продаж"
-                        value={selectedValue}
-                        optionFilterProp="children"
-                        filterOption={filterOption}
-                        options={[
-                            {label: '+Добавить новую схему', value: 'new', style: {color: '#722ed1'}},
-                            ...creator.entranceAll
-                        ]}
-                    />
+                    <Tooltip    title={ !!id ? "Зал у созданного мероприятия поменять уже нельзя, если вам это необходимо советуем пересоздать мероприятие" : 'Выберите зал'}>
+                        <Select
+                            disabled={!!id}
+                            style={{width: '100%', maxWidth: 400}}
+                            showSearch
+                            onChange={(value, option) => selectEntranceHall(value, option.type)}
+                            placeholder="Выбрать схему продаж"
+                            value={selectedValue}
+                            optionFilterProp="children"
+                            filterOption={filterOption}
+                            options={[
+                                {label: '+Добавить новую схему', value: 'new', style: {color: '#722ed1'}},
+                                ...creator.entranceAll
+                            ]}
+                        />
+                    </Tooltip>
                     {creator.entrance?.options && (
                         <Form
                             form={form}
@@ -319,6 +324,8 @@ const CreateEvent = () => {
                                 entrances: creator.entrance.options?.map((entrance) => ({
                                     id: entrance.id,
                                     switchState: switchStates[entrance.id] === undefined ? true : switchStates[entrance.id],
+                                    price: "",
+
                                 })),
                             }}
                         >
@@ -404,25 +411,47 @@ const CreateEvent = () => {
                                             form.validateFields()
                                                 .then(() => {
                                                     if (captch_check) {
-                                                        createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue(), creator.entrance.type)
-                                                            .then((response) =>{
-                                                                navigate(CREATOR_ROUTE)
+                                                        if (!id) {
+                                                            createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue(), creator.entrance.type)
+                                                                .then((response) => {
+                                                                    navigate(CREATOR_ROUTE)
 
 
-                                                            })
+                                                                })
+                                                        } else {
+                                                            updateEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue(), creator.entrance.type, id)
+                                                                .then((response) => {
+                                                                    navigate(CREATOR_ROUTE)
+                                                                    return notification.success({
+                                                                        message: 'Данные мероприятия успешно измеены'
+                                                                    })
+
+
+                                                                })
+                                                        }
                                                     }
                                                 })
                                                 .catch((error) => {
+                                                    return notification.error({
+                                                        message: 'Ошибка получения мероприятия',
+                                                        description: error,
+
+                                                    })
                                                     console.error("Error during form validation:", error);
                                                 });
                                         })
                                         .catch((error) => {
+                                            return notification.error({
+                                                message: 'Ошибка валидации  ',
+                                                description: error,
+
+                                            })
                                             console.error("Error during form validation:", error);
                                         });
                                 }}
                             >
 
-                                Создать
+                                {id ? "Изменить" : "Создать"}
                             </Button>
                         </Form>)}
 

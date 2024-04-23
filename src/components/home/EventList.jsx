@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { Context } from "../../index";
-import { Empty, Row, Space, Pagination } from "antd";
+import {Empty, Row, Space, Pagination, Select} from "antd";
 import EventItem from "./EventItem";
 import { observer } from "mobx-react-lite";
 import Title from "antd/es/typography/Title";
@@ -27,6 +27,7 @@ const EventList = ({ thisEvent }) => {
                         <Link onClick={() => {
                             event.setPage();
                             event.setSelectedType({});
+                            event.setSelectedCity({});
                             event.setSelectedDate({});
                             event.setSelectedPrice({});
                             event.setSerchTitle(null);
@@ -34,11 +35,14 @@ const EventList = ({ thisEvent }) => {
                     </Space>
                 ) : (
                     <>
+
                         <Space wrap size={"large"} style={{ minWidth: 260 }}>
+
                             {currentEvents.map(event =>
                                 <EventItem key={event.id} thisEvent={event} />
                             )}
                         </Space>
+                        {event.events.length > 12 && (
                         <Pagination
                             style={{ marginTop: "20px", textAlign: "center" }}
                             defaultCurrent={1}
@@ -47,6 +51,7 @@ const EventList = ({ thisEvent }) => {
                             total={event.totalCount}
                             onChange={paginate}
                         />
+                            )}
                     </>
                 )}
             </Row>

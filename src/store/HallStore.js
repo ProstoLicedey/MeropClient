@@ -5,6 +5,8 @@ export default class HallStore {
         this._ticket = []
         this._hall = {}
         this._selectedSeats=[]
+        this._hallUpdate= null
+        this._city = []
         makeAutoObservable(this)
     }
     setEntrance(entrance) {
@@ -19,6 +21,12 @@ export default class HallStore {
     setSelectedSeats(selectedSeats) {
         this._selectedSeats = selectedSeats
     }
+    setHallUpdate(hallUpdate) {
+        this._hallUpdate = hallUpdate
+    }
+    setCity(city) {
+        this._city = city
+    }
 
 
     get entrance() {
@@ -32,5 +40,11 @@ export default class HallStore {
     }
     get selectedSeats() {
         return this._selectedSeats
+    }
+    get hallUpdate() {
+        return this._hallUpdate
+    }
+    get city() {
+        return this._city
     }
 }

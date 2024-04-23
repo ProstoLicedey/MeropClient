@@ -3,9 +3,9 @@ import SerchInput from "../../components/serch";
 import {useMediaQuery} from "react-responsive";
 import EventList from "../../components/home/EventList";
 import {Context} from "../../index";
-import {fetchEvent, fetchTypes} from "../../http/eventAPI";
+import {fetchCity, fetchEvent, fetchTypes} from "../../http/eventAPI";
 import {observer} from "mobx-react-lite";
-import {Button, Col, Drawer, Row} from "antd";
+import {Button, Col, Drawer, Row, Select} from "antd";
 import ParametersBar from "../../components/home/ParametersBar";
 import {SlidersOutlined} from "@ant-design/icons";
 
@@ -20,17 +20,18 @@ const Home = observer( () =>  {
     };
     useEffect(() => {
        fetchTypes().then(data => event.setTypes(data))
+        fetchCity().then(data => event.setCities(data))
         fetchEvent(null, 1, null, null).then(data => {
             event.setEvents(data.rows)
             event.setTotalCount(data.count)
         })
     }, []);
     useEffect(() => {
-        fetchEvent(event.selectedType.value, event.page, event.selectedPrice, event.selectedDate, event.serchTitle).then(data => {
+        fetchEvent(event.selectedType.value, event.page, event.selectedPrice, event.selectedDate, event.serchTitle, event.selectedCity,).then(data => {
             event.setEvents(data.rows)
             event.setTotalCount(data.count)
         })
-    }, [event.page, event.selectedType, event.selectedDate,event.selectedPrice, event.serchTitle])
+    }, [event.page, event.selectedType, event.selectedDate,event.selectedPrice, event.serchTitle, event.selectedCity])
     return (
         <div>
             {isMobile && (<SerchInput style={{ padding: '3vw'}}/> )}
@@ -57,6 +58,7 @@ const Home = observer( () =>  {
                 >
                     <ParametersBar />
                 </Drawer>
+
                 <EventList/>
             </div>}
 

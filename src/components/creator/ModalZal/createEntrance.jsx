@@ -1,17 +1,19 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Button, Card, Flex, Form, Input, InputNumber, Space, Tour, Typography} from "antd";
+import {Alert, Button, Card, Flex, Form, Input, InputNumber, Select, Space, Tooltip, Tour, Typography} from "antd";
 import {CloseOutlined, QuestionOutlined, SearchOutlined} from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import onCreate from "../../../services/userService/authService";
-import {createEntrance} from "../../../http/entranceAPI";
+import {createEntrance, updateEntrance} from "../../../http/entranceAPI";
 import {Context} from "../../../index";
 import HallPhoto from "../../../assets/Hall.png";
 import SliderPhoto from "../../../assets/Slider.png";
+import {observer} from "mobx-react-lite";
+import {getCityDaData} from "../../../http/cityAPi";
 
 
 const CreateEntrance = ({Close}) => {
     const [form] = Form.useForm();
-    const {user} = useContext(Context)
+    const {user, hall} = useContext(Context)
     const [open, setOpen] = useState(false);
 
     const ref1 = useRef(null);
@@ -19,20 +21,57 @@ const CreateEntrance = ({Close}) => {
     const ref3 = useRef(null);
 
     const sum = () => {
-        if (form.getFieldsValue().option === undefined) {
+        const options = form.getFieldsValue().option;
+        if (options === undefined) {
+            form.setFieldsValue({
+                totalSeats: 0,
+            });
             return;
         }
+
         let sum = 0;
-        form.getFieldsValue().option.forEach((i) => {
-            sum += i.totalSeats;
+        options.forEach((option) => {
+            if (option && option.totalSeats) {
+                sum += option.totalSeats;
+            }
         });
 
         form.setFieldsValue({
-            totalSeats: sum,
-        })
-
-
+            totalSeats: typeof sum === "number" ? sum : 0,
+        });
     };
+    const getCity = (inputValue) => {
+        if (inputValue.length > 3) {
+            getCityDaData(inputValue).then(data => hall.setCity(data))
+        }
+    };
+
+    useEffect(() => {
+        if (!!hall.hallUpdate?.entranceOptions) {
+            const options = hall.hallUpdate.entranceOptions?.map(option => ({
+                name: option.name.trim(), // убираем лишние пробелы
+                totalSeats: option.totalSeats,
+                id: option.id
+            }));
+
+            form.setFieldsValue({
+                name: hall.hallUpdate.name,
+                address: hall.hallUpdate.address,
+                city: {value: hall.hallUpdate.city?.ideficator, label: hall.hallUpdate.city?.name},
+                option: options ? options : {}
+            })
+
+
+        }
+        else {
+            form.setFieldsValue({
+                name: "",
+                address: "",
+                option: [{}],
+            })
+        }
+        sum()
+    }, [hall.hallUpdate, Close]);
 
     const steps = [
         {
@@ -65,10 +104,10 @@ const CreateEntrance = ({Close}) => {
             description: 'В зале может быть от 1 до 10 категории.',
             target: null,
         },
+
     ];
 
     return (
-
         <Form
             layout="vertical"
             form={form}
@@ -82,6 +121,12 @@ const CreateEntrance = ({Close}) => {
             }}
             title="Входные билеты"
         >
+            {hall.hallUpdate?.eventCount > 0 && (
+                <Alert
+                    message={`Зал привязан к  актуальным мероприятиям, поэтому добавить или удалить категории не получиться`}
+                    banner style={{margin: 10}}/>
+            )}
+
             <Form.Item
                 label="Название площадки"
                 name="name"
@@ -93,6 +138,34 @@ const CreateEntrance = ({Close}) => {
                 ]}
             >
                 <Input/>
+            </Form.Item>
+            <Form.Item
+                label="Город"
+                name="city"
+                rules={[
+                    {
+                        required: true,
+                        message: 'Поле не должно быть пустым',
+                    },
+                ]}
+            >
+                <Select
+                    showSearch
+                    placeholder=""
+                    optionFilterProp="children"
+                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                    filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                    }
+                    onSearch={(inputValue) => getCity(inputValue)} // передаем введенное значение в функцию getCity
+                    options={hall.city}
+                    onChange={(value, option) => {
+                        // Создаем объект, который содержит как value, так и label
+                        const selectedOption = { value, label: option.label };
+                        // Устанавливаем это значение в форму
+                        form.setFieldsValue({ city: selectedOption });
+                    }}
+                />
             </Form.Item>
             <Form.Item
                 label="Адрес площадки"
@@ -111,7 +184,7 @@ const CreateEntrance = ({Close}) => {
                 <Button style={{marginBottom: 10}} shape="circle" size={"small"} onClick={() => setOpen(true)}
                         icon={<QuestionOutlined/>}/>
             </Space>
-            <Form.List name="option" onInput={sum} >
+            <Form.List name="option" onInput={sum}>
                 {(fields, {add, remove}) => (
                     <div
                         style={{
@@ -126,14 +199,14 @@ const CreateEntrance = ({Close}) => {
                                 size="small"
                                 title={`Категория ${field.name + 1}`}
                                 key={field.key}
-                                extra={index !== 0 && (
+                                extra={(index !== 0 && (hall.hallUpdate === null || hall.hallUpdate?.eventCount == 0) && (
                                     <CloseOutlined
                                         onClick={() => {
                                             remove(index);
                                             sum();
                                         }}
                                     />
-                                )}
+                                ))}
                             >
                                 <Form.Item
                                     label="Название категории"
@@ -170,10 +243,13 @@ const CreateEntrance = ({Close}) => {
                                 </Form.Item>
                             </Card>
                         ))}
-
-                        <Button type="dashed" onClick={() => add()} block ref={ref2}>
-                            Добавить категорию +
-                        </Button>
+                        <Tooltip
+                            title={hall.hallUpdate?.eventCount > 0 ? "Зал привязан к актуальным мероприятиям, поэтому добавить или удалить категории не получиться" : ""}>
+                            <Button disabled={hall.hallUpdat?.eventCount > 0} type="dashed" onClick={() => add()} block
+                                    ref={ref2}>
+                                Добавить категорию +
+                            </Button>
+                        </Tooltip>
                     </div>
                 )}
             </Form.List>
@@ -190,14 +266,27 @@ const CreateEntrance = ({Close}) => {
                                 .then((values) => {
                                         const userId = user.user.id;
                                         values.userId = userId;
-                                        createEntrance(values).then(response => {
-                                            if (response.id) {
-                                                Close()
-                                                form.resetFields();
-                                            } else {
-                                                console.error("Error server");
-                                            }
-                                        })
+
+                                        if (!!hall.hallUpdate?.id) {
+                                            values.eventCount = hall.hallUpdate?.eventCount;
+                                            updateEntrance(values, hall.hallUpdate?.id)
+                                                .then(() => {
+                                                    Close()
+                                                    form.resetFields();
+                                                })
+                                                .catch(error => {
+                                                    console.error("Ошибка при выполнении запроса:", error);
+                                                });
+                                        } else {
+                                            createEntrance(values)
+                                                .then(() => {
+                                                    Close()
+                                                    form.resetFields();
+                                                })
+                                                .catch(error => {
+                                                    console.error("Ошибка при выполнении запроса:", error);
+                                                });
+                                        }
                                     }
                                 )
                                 .catch((error) => {
@@ -205,7 +294,7 @@ const CreateEntrance = ({Close}) => {
                                 });
                         }}
                 >
-                    Создать
+                    {!!hall.hallUpdate?.id ? "Изменить" : "Создать"}
                 </Button>
             </Form.Item>
 
@@ -217,4 +306,4 @@ const CreateEntrance = ({Close}) => {
     );
 };
 
-export default CreateEntrance;
+export default observer(CreateEntrance);

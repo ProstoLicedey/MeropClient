@@ -21,9 +21,11 @@ const Halls = () => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
-    const {user, creator, massage} = useContext(Context);
+    const {user, creator, hall} = useContext(Context);
     const [loading, setLoading] = useState(true)
     const [update, setUpdate] = useState(1)
+    const [updateId, setUpdateId] = useState()
+    const [updateType, setUpdateType] = useState()
 
 
     useEffect(() => {
@@ -191,7 +193,9 @@ const Halls = () => {
                             color: 'green'
                         }}
                                 onClick={() => {
-                                    // return showModal(record.id)
+                                    setUpdateId(record.id)
+                                    setUpdateType(record.type)
+                                    setModal(true)
                                 }}>
                             Изменить
                         </Button>
@@ -222,8 +226,14 @@ const Halls = () => {
 
             <ModalZal open={modal}
                       onCancel={() => {
+                          setUpdateId(null)
+                          setUpdateType(null);
+                          hall.setHallUpdate(null);
                           setModal(false);
-                      }}/>
+                      }}
+                      id={updateId}
+                      type={updateType}
+            />
         </Space>
 
     );

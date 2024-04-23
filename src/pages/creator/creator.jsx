@@ -2,15 +2,15 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Layout, Space, Switch} from "antd";
 import Title from "antd/es/typography/Title";
 import CreatorMenu from "../../components/creator/CreatorMenu";
-import MeropTable from "../../components/creator/Tabs/event";
+import MeropTable from "../../components/creator/tables/event";
 import Sider from "antd/es/layout/Sider";
 import ControllerCreator from "./controllerCreator";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
 import {ReCAPTCHA} from "react-google-recaptcha";
 import Profile from "../../components/user/profile";
-import Halls from "../../components/creator/Tabs/halls";
-import Buyers from "../../components/creator/Tabs/buyers";
+import Halls from "../../components/creator/tables/halls";
+import Buyers from "../../components/creator/tables/buyers";
 import {logout} from "../../http/userAPI";
 
 

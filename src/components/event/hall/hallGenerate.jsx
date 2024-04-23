@@ -28,6 +28,7 @@ const color = [
 ];
 
 const HallGenerate = ({numberRows, numberSeatsInRow, hallOptionPrice, tickets}) => {
+    console.log(hallOptionPrice)
     const {id} = useParams();
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [sum, setSum] = useState(0);

@@ -88,11 +88,6 @@ export  const publicRoutes = [
 ]
 export  const registrationRoutes = [
 
-
-    {
-        path: EVENT_ROUTE + '/:id',
-        Component: Event
-    },
     {
         path: HALL_ROUTE + '/:id',
         Component: Hall

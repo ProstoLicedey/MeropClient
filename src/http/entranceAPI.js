@@ -17,3 +17,7 @@ export  const  createEntrance = async (entrance) =>{
     const  {data} = await $host.post('api/entrance/', entrance)
     return data
 }
+export  const  updateEntrance = async (entrance, id) =>{
+    const  {data} = await $host.put('api/entrance/'+ id, entrance)
+    return data
+}
