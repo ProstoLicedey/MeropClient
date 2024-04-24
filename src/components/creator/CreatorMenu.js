@@ -3,12 +3,12 @@ import {
     BarcodeOutlined,
     CalendarOutlined,
     EnvironmentOutlined,
-    LogoutOutlined,
+    LogoutOutlined, MenuFoldOutlined,
     PoweroffOutlined,
     TeamOutlined,
     UserOutlined
 } from '@ant-design/icons';
-import {Menu, Popconfirm} from 'antd';
+import {Button, Menu, Popconfirm} from 'antd';
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
 import {logout} from "../../http/userAPI";
@@ -53,18 +53,18 @@ const menuController = [
     }
 ];
 
-const CreatorMenu = () => {
+const CreatorMenu = ({close}) => {
     const {creator, user} = useContext(Context);
 
     let items = []
     if(user.user.role == 'ADMIN'){
 
     }
-    else  if(user.user.role == 'CREATOR'){
-        items = menuCreator
-    }
     else  if(user.user.role == 'CONTROLLER'){
         items = menuController
+    }
+    else  if(user.user.role == 'CREATOR'){
+        items = menuCreator
     }
 
     const handleLogout = () => {
@@ -84,6 +84,7 @@ const CreatorMenu = () => {
             return;
         }
         window.location.hash = e.key;
+        close()
     };
 
     return (
@@ -96,7 +97,9 @@ const CreatorMenu = () => {
             defaultOpenKeys={['sub1']}
             mode="inline"
         >
-            {menuController.map((item, index) => (
+
+
+            {items.map((item, index) => (
                 <Menu.Item key={item.key} icon={item.icon}>
                     {item.label}
                 </Menu.Item>

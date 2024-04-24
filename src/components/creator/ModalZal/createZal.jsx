@@ -159,7 +159,7 @@ const CreateZal = ({Close}) => {
                     required: true, message: 'Поле не должно быть пустым',
                 },]}
             >
-                <Input/>
+                <Input showCount maxLength={50}/>
             </Form.Item>
             <Form.Item
                 label="Город"
@@ -197,7 +197,7 @@ const CreateZal = ({Close}) => {
                     required: true, message: 'Поле не должно быть пустым',
                 },]}
             >
-                <Input/>
+                <Input  maxLength={200}/>
             </Form.Item>
             <Form.Item
                 label="Количество рядов"
@@ -249,7 +249,7 @@ const CreateZal = ({Close}) => {
                                 required: true, message: 'Поле не должно быть пустым',
                             },]}
                         >
-                            <Input/>
+                            <Input showCount maxLength={50}/>
                         </Form.Item>
                         <div ref={ref2}>
                             <Form.Item
@@ -287,8 +287,8 @@ const CreateZal = ({Close}) => {
                     </Card>))}
 
                     <Tooltip
-                        title={hall.hallUpdate?.eventCount > 0 ? "Зал привязан к актуальным мероприятиям, поэтому добавить или удалить категории не получиться" : ""}>
-                        <Button disabled={hall.hallUpdate?.eventCount > 0} type="dashed" onClick={() => add()} block
+                        title={hall.hallUpdate?.eventCount > 0 ? "Зал привязан к актуальным мероприятиям, поэтому добавить или удалить категории не получиться" : fields.length >= 15 ? "Больше добавить категррий нельзя, макисмум 15":""}>
+                        <Button disabled={hall.hallUpdat?.eventCount > 0 || fields.length >= 15} type="dashed" onClick={() => add()} block
                                 ref={ref2}>
                             Добавить категорию +
                         </Button>

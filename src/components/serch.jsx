@@ -35,6 +35,7 @@ const SerchInput = ({style}) => {
 
     return (
         <Search
+            maxLength={100}
             placeholder="Найти мероприятие"
             onSearch={() => navigate(HOME_ROUTE)}
             style={style}

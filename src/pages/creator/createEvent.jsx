@@ -189,7 +189,7 @@ const CreateEvent = () => {
                                 },
                             ]}
                         >
-                            <Input/>
+                            <Input showCount maxLength={50}/>
                         </Form.Item>
 
                         <Form.Item
@@ -203,9 +203,10 @@ const CreateEvent = () => {
                             ]}
                         >
                             <TextArea
+                                showCount maxLength={5000}
                                 autoSize={{
-                                    minRows: 2,
-                                    maxRows: 6,
+                                    minRows: 3,
+                                    maxRows: 15,
                                 }}
                             />
                         </Form.Item>

@@ -56,15 +56,16 @@ const Event = () => {
         deleteEvent(id)
             .then(() => {
                 setUpdate(update + 1)
-                notifai.type = "success"
-                notifai.message = "Внимание!"
-                notifai.description = 'Контроллер успешно удален!'
+                 return notification.success({
+                    message: 'Успешно удалено',
+                })
 
             })
             .catch(error => {
-                notifai.type = "error"
-                notifai.message = "Ошибка!"
-                notifai.description = error
+                return notification.error({
+                    message: 'Ошибка',
+                    description: error,
+                })
             });
     }
 
@@ -224,25 +225,31 @@ const Event = () => {
 
 
     return (
-
-        <Space direction="vertical" style={{textAlign: 'left', width: '90%', backgroundColor: 'white', margin: 10}}>
+        <Space direction="vertical" style={{ textAlign: 'left',  backgroundColor: 'white', marginLeft:"5%", marginTop:"5%",  width:'100%' }}>
             <Title level={2}>
-                {archive? "Архив мероприятий" : "Мероприятия" }
+                {archive ? "Архив мероприятий" : "Мероприятия"}
             </Title>
             <Space direction={'horizontal'}>
-                <Button type="primary" style={{backgroundColor: '#722ed1'}} onClick={() => navigate(CREATEEVENT_ROUTE)}>
+                <Button type="primary" style={{ backgroundColor: '#722ed1' }} onClick={() => navigate(CREATEEVENT_ROUTE)}>
                     Добавить +
                 </Button>
-                <Tooltip title={archive? "Просмотреть aктуальные мероприятия" : "Просмотреть архив прошедших мероприятий"}>
-                    <Button onClick={()=> setArchive(!archive)} type="link">
-                        {archive? "Акуальные мероприятия" : "Архив" }
+                <Tooltip title={archive ? "Просмотреть актуальные мероприятия" : "Просмотреть архив прошедших мероприятий"}>
+                    <Button onClick={() => setArchive(!archive)} type="link">
+                        {archive ? "Актуальные мероприятия" : "Архив"}
                     </Button>
                 </Tooltip>
             </Space>
-            <Table style={{cursor: 'pointer'}} columns={columns} dataSource={creator.events} onRow={(record) => ({
-                // onClick: () => onRowClick(record)
-            })}/>
+            <Table
+                style={{ cursor: 'pointer', overflowX: 'auto' }} // Add overflowX: 'auto' to enable horizontal scrolling
+                columns={columns}
+                dataSource={creator.events}
+                onRow={(record) => ({
+                    // onClick: () => onRowClick(record)
+                })}
+                responsive={{ xs: true, sm: true, md: true, lg: true, xl: true, xxl: true }}
+            />
         </Space>
     );
 };
+
 export default observer(Event);

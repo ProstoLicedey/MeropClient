@@ -46,6 +46,7 @@ const MyController = () => {
                     message: 'Ошибка ' + error,
                 });
             });
+        setUpdate(update+1)
     }
 
     if (loading) {
@@ -175,18 +176,9 @@ const MyController = () => {
                         display: "flex",
                         flexFlow: "column"
                     }}>
-                        <Button style={{
-                            borderColor: 'green',
-                            color: 'green'
-                        }}
-                                onClick={() => {
-                                    // return showModal(record.id)
-                                }}>
-                            Изменить
-                        </Button>
                         <Popconfirm
                             title="Вы уверены, что хотите удалить контроллера?"
-                            onConfirm={() => confirmOneGood(record.controllerId)}
+                            onConfirm={() =>  confirmOneGood(record.controllerId)}
                             okText="Да"
                             cancelText="Отмена">
                             <Button danger>Удалить</Button>
@@ -216,15 +208,21 @@ const MyController = () => {
                 onClick={() =>    setOpen(true)}>
                 Добавить +
             </Button>
-            <Table columns={columns} dataSource={controllers} onRow={(record) => ({
-                // onClick: () => onRowClick(record)
-            })}/>
+            <Table
+                columns={columns}
+                dataSource={controllers}
+                style={{  overflowX: 'auto' }}
+
+            />
             <CollectionCreateForm
+
                 open={open}
                 onCancel={() => {
                     setOpen(false);
+                    setUpdate(update+1)
                 }}
                 idCreator={user.user.id}
+
             />
         </Space>
     );

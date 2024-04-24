@@ -8,6 +8,7 @@ import {useContext, useEffect, useState} from "react";
 import {Context} from "./index";
 import {observer} from "mobx-react-lite";
 import checkAuthService from "./services/checkAuthService";
+import ErrorBoundary from "./components/Error";
 
 const {Header, Content, Footer} = Layout;
 
@@ -35,6 +36,7 @@ const App = observer (() =>  {
         )
     }
     return (
+        <ErrorBoundary>
         <BrowserRouter>
 
             <Layout className="layout" style={{minHeight: '100vh'}}>
@@ -48,6 +50,7 @@ const App = observer (() =>  {
                 </div>
             </Layout>
         </BrowserRouter>
+        </ErrorBoundary>
     );
 })
 

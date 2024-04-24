@@ -62,7 +62,7 @@ const Event = () => {
                 </Col>
                 <Col md={18} style={{width: '100%', display: 'flex', flexDirection: 'column'}}>
                     <Space direction="vertical" size={"middle"}>
-                        <Row s>
+                        <Row>
                             <Tag style={{fontWeight: 'bold'}} bordered={false}>
                                 {event.event.ageRating ? event.event.ageRating.age : null}
                                 +
@@ -98,15 +98,15 @@ const Event = () => {
                                     symbol: expanded ? 'Свернуть' : 'Подробнее',
                                 }}
                                 title={event.event.description}
-                                style={{whiteSpace: 'pre-wrap'}}
+                                style={{ whiteSpace: 'pre-wrap' }}
                             >
                                 {event.event.description}
-
                             </Paragraph>
-                            <Button type="link" onClick={handleExpand} style={{float: 'right', marginTop: '-1em'}}>
-                                {expanded ? 'Свернуть' : 'Подробнее'}
-                            </Button>
-
+                            {event.event.description?.length > 420 && (
+                                <Button type="link" onClick={handleExpand} style={{ float: 'right', marginTop: '-1em' }}>
+                                    {expanded ? 'Свернуть' : 'Подробнее'}
+                                </Button>
+                            )}
                         </div>
                         <Space style={{float: 'right'}} hidden={new Date(event.event.dateTime) < new Date()}>
                             <Button

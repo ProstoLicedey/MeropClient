@@ -1,10 +1,11 @@
 import React, {useContext, useState} from 'react';
-import {Alert, Button, DatePicker, Form, Input, Space, Typography} from "antd";
+import {Alert, Button, DatePicker, Form, Input, notification, Space, Typography} from "antd";
 import onCreate from "../../services/userService/authService";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
 import {ReCAPTCHA} from "react-google-recaptcha";
 import {SmartCaptcha} from "@yandex/smart-captcha";
+import passwordCheck from "../../services/passwordCheck";
 
 const {Text, Link} = Typography
 
@@ -46,7 +47,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     },
                 ]}
             >
-                <Input/>
+                <Input maxLength={60}/>
             </Form.Item>
 
             <Form.Item
@@ -60,7 +61,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     },
                 ]}
             >
-                <Input.Password/>
+                <Input.Password  maxLength={100}/>
             </Form.Item>
 
             <Form.Item
@@ -83,7 +84,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     }),
                 ]}
             >
-                <Input.Password/>
+                <Input.Password  maxLength={100}/>
             </Form.Item>
             <Form.Item
                 hidden={!isRegistration}
@@ -97,7 +98,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     },
                 ]}
             >
-                <Input/>
+                <Input maxLength={50}/>
             </Form.Item>
             <Form.Item
                 hidden={!isRegistration}
@@ -110,7 +111,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     },
                 ]}
             >
-                <Input/>
+                <Input  maxLength={50}/>
             </Form.Item>
             <Form.Item
                 hidden={!isRegistration}
@@ -148,6 +149,15 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                                 .validateFields()
                                 .then((values) => {
                                     if (captch_check) {
+                                        if(isRegistration) {
+                                            const data = passwordCheck(values.password);
+                                            if (data !== true) {
+                                                return notification.error({
+                                                    message: 'Ошибка',
+                                                    description: data
+                                                });
+                                            }
+                                        }
                                         onCreate(values, user, isRegistration, (!!idCreator ? 'CONTROLLER' : 'USER'), idCreator)
                                             .then(result => {
                                                 if (result === true) {

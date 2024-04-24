@@ -51,37 +51,40 @@ const HeaderPage = () => {
         <Header style={{
             display: 'flex',
             alignItems: 'center',
-            height: '5vw',
+            height: '7%',
             justifyContent: 'space-between',
             backgroundColor: '#391085'
         }}>
-            <NavLink to={HOME_ROUTE} style={{display: 'flex', alignItems: 'center'}}>
-                {!isMobile && (<Image src={Logo}
-                                      width={'5vw'}
-                                      height={'5vw'}
-                                      style={{
-                                          padding: '0.8vw',
-                                          userSelect: 'none',
-                                      }}
-                                      preview={false}
-                                      alt="Логотип сайта"
-                />)}
-                <Title level={1}
-                       style={{
-                           color: '#FFFFFFFF',
-                           marginTop: '0.3vw',
-                           marginBottom: '0.3vw',
-                           userSelect: 'none',
-                           whiteSpace: 'nowrap',
-                           fontSize: '3vw',
-                       }}
+            <NavLink to={HOME_ROUTE} style={{ display: 'flex', alignItems: 'center' }}>
+                {!isMobile && (
+                    <Image src={Logo}
+                           width={'5vw'}
+                           height={'5vw'}
+                           style={{
+                               padding: '0.8vw',
+                               userSelect: 'none',
+                           }}
+                           preview={false}
+                           alt="Логотип сайта"
+                    />
+                )}
+                <Title
+                    style={{
+                        color: '#FFFFFFFF',
+                        marginTop: '0.3vw',
+                        marginBottom: '0.3vw',
+                        userSelect: 'none',
+                        whiteSpace: 'nowrap',
+                        fontSize: isMobile ? '6vw' : '3vw', // Изменение размера шрифта для мобильных устройств
+                    }}
                 >
                     Merop
                 </Title>
             </NavLink>
 
-            {!isMobile && (<SerchInput style={{width: '35vw',}}/>)}
-
+            {!isMobile && (
+                <SerchInput style={{ width: '35vw' }} />
+            )}
 
             <Title level={3}
                    style={{
@@ -89,12 +92,12 @@ const HeaderPage = () => {
                        marginTop: 10,
                        userSelect: 'none',
                        whiteSpace: 'nowrap',
-                       fontSize: '1.8vw',
+                       fontSize: isMobile ? '4vw' : '1.8vw', // Изменение размера шрифта для мобильных устройств
                    }}
                    onClick={buttonUser}
             > {
                 user.isAuth ?
-                    <UserOutlined/>
+                    <UserOutlined />
                     :
                     "Войти"
             }

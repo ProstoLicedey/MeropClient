@@ -171,13 +171,19 @@ const Buyers = () => {
         }),
     };
     return (
-        <Space direction="vertical" style={{ textAlign: 'left', width: '90%', backgroundColor:'white', margin:10}}>
+        <Space direction="vertical" style={{ textAlign: 'left',  backgroundColor: 'white', marginLeft:"5%", marginTop:"5%",  width:'100%'}}>
             <Title level={2}>
                Покупки
             </Title>
-            <Table style={{cursor:'pointer'}} columns={columns} dataSource={creator.events} onRow = {(record) => ({
+            <Table
+                style={{overflowX: 'auto'}}
+                columns={columns}
+                dataSource={creator.events}
+                onRow = {(record) => ({
                 onClick: () => onRowClick(record)
-            })}/>
+            })}
+                responsive={{ xs: true, sm: true, md: true, lg: true, xl: true, xxl: true }}
+            />
         </Space>
     );
 };

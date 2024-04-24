@@ -137,7 +137,7 @@ const CreateEntrance = ({Close}) => {
                     },
                 ]}
             >
-                <Input/>
+                <Input showCount maxLength={50}/>
             </Form.Item>
             <Form.Item
                 label="Город"
@@ -177,7 +177,7 @@ const CreateEntrance = ({Close}) => {
                     },
                 ]}
             >
-                <Input/>
+                <Input  maxLength={200}/>
             </Form.Item>
             <Space direction={"horizontal"}>
                 <Title level={4}>Категории</Title>
@@ -199,7 +199,7 @@ const CreateEntrance = ({Close}) => {
                                 size="small"
                                 title={`Категория ${field.name + 1}`}
                                 key={field.key}
-                                extra={(index !== 0 && (hall.hallUpdate === null || hall.hallUpdate?.eventCount == 0) && (
+                                extra={(index !== 0 && (hall.hallUpdate === null || hall.hallUpdate?.eventCount === 0) && (
                                     <CloseOutlined
                                         onClick={() => {
                                             remove(index);
@@ -218,11 +218,11 @@ const CreateEntrance = ({Close}) => {
                                         },
                                     ]}
                                 >
-                                    <Input/>
+                                    <Input howCount maxLength={50}/>
                                 </Form.Item>
 
                                 <Form.Item
-                                    label="Мест в категорие"
+                                    label="Мест в категории"
                                     name={[field.name, 'totalSeats']}
                                     rules={[
                                         {
@@ -244,8 +244,8 @@ const CreateEntrance = ({Close}) => {
                             </Card>
                         ))}
                         <Tooltip
-                            title={hall.hallUpdate?.eventCount > 0 ? "Зал привязан к актуальным мероприятиям, поэтому добавить или удалить категории не получиться" : ""}>
-                            <Button disabled={hall.hallUpdat?.eventCount > 0} type="dashed" onClick={() => add()} block
+                            title={hall.hallUpdate?.eventCount > 0 ? "Зал привязан к актуальным мероприятиям, поэтому добавить или удалить категории не получиться" : fields.length >= 15 ? "Больше добавить категррий нельзя, макисмум 15":""}>
+                            <Button disabled={hall.hallUpdat?.eventCount > 0 || fields.length >= 15} type="dashed" onClick={() => add()} block
                                     ref={ref2}>
                                 Добавить категорию +
                             </Button>
