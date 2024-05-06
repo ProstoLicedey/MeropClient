@@ -3,7 +3,7 @@ import {
     Button, Card, Col, ConfigProvider,
     DatePicker,
     Form,
-    Input,
+    Input, InputNumber,
     message, notification, Row,
     Select, Space, Switch, Tooltip,
     TreeSelect, Typography, Upload,
@@ -312,8 +312,8 @@ const CreateEvent = () => {
                             optionFilterProp="children"
                             filterOption={filterOption}
                             options={[
-                                {label: '+Добавить новую схему', value: 'new', style: {color: '#722ed1'}},
-                                ...creator.entranceAll
+                                {key: 'new', label: '+Добавить новую схему', value: 'new', style: {color: '#722ed1'}},
+                                ...creator.entranceAll.map((item, index) => ({ key: index, ...item }))
                             ]}
                         />
                     </Tooltip>
@@ -380,11 +380,14 @@ const CreateEvent = () => {
                                                         </Col>
                                                         <Col span={8}>
                                                             <Form.Item name={[name, 'price']}>
-                                                                <Input
+                                                                <InputNumber
+
+                                                                    min={0}
                                                                     addonAfter="₽"
                                                                     placeholder="Цена"
                                                                     style={{marginRight: 40, width: '150px'}}
                                                                     disabled={switchStates[name] === undefined ? false : !switchStates[name]}
+
                                                                 />
                                                             </Form.Item>
                                                         </Col>

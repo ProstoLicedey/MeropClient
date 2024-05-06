@@ -5,7 +5,7 @@ export default class HallStore {
         this._ticket = []
         this._hall = {}
         this._selectedSeats=[]
-        this._hallUpdate= null
+        this._hallUpdate= {}
         this._city = []
         makeAutoObservable(this)
     }

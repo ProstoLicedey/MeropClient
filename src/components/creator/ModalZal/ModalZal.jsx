@@ -19,6 +19,7 @@ const ModalZal = ({open, onCancel, id, type}) => {
             getUpdate(id, type).then(data => {
                 hall.setHallUpdate(data)
                 hall.setCity([{label: data.city.name, value: data.city.ideficator}])
+
             })
         }
     }, [type, id]);

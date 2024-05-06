@@ -232,7 +232,7 @@ const Halls = () => {
                       onCancel={() => {
                           setUpdateId(null)
                           setUpdateType(null);
-                          hall.setHallUpdate(null);
+                          hall.setHallUpdate({});
                           setModal(false);
                       }}
                       id={updateId}

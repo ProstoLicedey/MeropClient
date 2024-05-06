@@ -13,7 +13,7 @@ import Home from "./pages/event/home";
 import Event from "./pages/event/event";
 import Creator from "./pages/creator/creator";
 import User from "./pages/user/user";
-import Admin from "./pages/admin/admin";
+import AdminPage from "./pages/admin/adminPage";
 import Hall from "./pages/event/hall";
 import Order from "./pages/event/order";
 import CreatorRegist from "./pages/creator/creatorRegist";
@@ -59,7 +59,7 @@ export  const creatorRoutes = [
 export  const adminRoutes = [
     {
         path: ADMIN_ROUTE,
-        Component: Admin
+        Component: AdminPage
     },
 
 ]

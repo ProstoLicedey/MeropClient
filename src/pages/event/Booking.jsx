@@ -121,10 +121,11 @@ const Booking = () => {
         }
         const formData = new FormData
         formData.append('userId', user.user.id)
-        console.log(hall.ticket)
+
         formData.append('tickets', JSON.stringify(hall.ticket))
         createOrder(formData).then(data => {
-
+            hall.setSelectedSeats([])
+            hall.setHall({})
             navigate(ORDER_ROUTE + '/' + data.id)
 
         }).finally(hall.setTicket([]))
@@ -183,19 +184,6 @@ const Booking = () => {
                                         {getName(parseInt(item.split("-")[0]), parseInt(item.split("-")[1]))}
                                     </Tag>
                                 </Space>
-                                {/*<Button*/}
-                                {/*    onClick={() => handleDelete(index)}*/}
-                                {/*    size={"large"}*/}
-                                {/*    style={{*/}
-                                {/*        marginLeft: 'auto',*/}
-                                {/*        position: 'absolute',*/}
-                                {/*        right: 0,*/}
-                                {/*        margin: '5px',*/}
-                                {/*        marginRight: '15px'*/}
-                                {/*    }}*/}
-                                {/*>*/}
-                                {/*    <DeleteOutlined/>*/}
-                                {/*</Button>*/}
                             </Space>
                             <Title level={5} style={{alignSelf: 'flex-end'}}>
                                 {getPrice(parseInt(item.split("-")[0]), parseInt(item.split("-")[1]))}

@@ -235,7 +235,7 @@ const CreateZal = ({Close}) => {
                         size="small"
                         title={`Категория ${field.name + 1}`}
                         key={field.key}
-                        extra={index !== 0 && (hall.hallUpdate === null || hall.hallUpdate?.eventCount == 0) && (
+                        extra={index !== 0 && ((Object.keys(hall.hallUpdate)).length === 0 || hall.hallUpdate?.eventCount == 0) && (
                             <CloseOutlined
                                 onClick={() => {
                                     remove(index);

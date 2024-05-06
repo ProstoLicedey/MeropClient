@@ -6,6 +6,8 @@ import ruRU from 'antd/es/locale/ru_RU';
 import EventItem from "./EventItem";
 import Link from "antd/es/typography/Link";
 import dayjs from "dayjs";
+import {fetchRating, fetchTypes} from "../../http/eventAPI";
+import {getEntranceHallUser} from "../../http/entranceAPI";
 
 const {Text, Title} = Typography
 
@@ -14,6 +16,7 @@ const {RangePicker} = DatePicker;
 const ParametersBar = observer(() => {
     const today = dayjs();
     const {event} = useContext(Context)
+    const [priceMax, setPriceMax] = useState(1000);
     const getBackgroundColor = (type) => {
         return type.value === event.selectedType.value ? '#b37feb' : 'inherit';
     };
@@ -24,13 +27,14 @@ const ParametersBar = observer(() => {
     };
 
 
-    let max = 800;
+    useEffect(() => {
+        event.events.forEach(event => {
+            if (event.minPrice > priceMax) {
+                setPriceMax(event.minPrice);
+            }
+        });
+    }, [event.events]);
 
-    event.events.forEach(event => {
-        if (event.price > max) {
-            max = event.price;
-        }
-    });
 
 
     const onSliderChange = (values) => {
@@ -46,10 +50,10 @@ const ParametersBar = observer(() => {
         setSliderValues([sliderValues[0], value]);
     };
     useEffect(() => {
-        setSliderValues([0, max]);
-    }, [max]);
+        setSliderValues([0, priceMax]);
+    }, [priceMax]);
 
-    const [sliderValues, setSliderValues] = useState([0, max]);
+    const [sliderValues, setSliderValues] = useState([0, priceMax]);
     return (
         <Space size={"large"} direction="vertical" style={{justifyContent: "center", margin: "5%", minWidth: 240}}>
             <div>
@@ -115,7 +119,7 @@ const ParametersBar = observer(() => {
                 <Slider
                     range
                     min={1}
-                    max={max}
+                    max={priceMax}
                     onChange={onSliderChange}
                     value={sliderValues}
                 />
@@ -126,7 +130,7 @@ const ParametersBar = observer(() => {
                             prefix="от"
                             min={0}
                             valu
-                            max={max}
+                            max={priceMax}
                             style={{
                                 margin: '0 16px',
                             }}
@@ -137,7 +141,7 @@ const ParametersBar = observer(() => {
                         <InputNumber
                             prefix="до"
                             min={0}
-                            max={max}
+                            max={priceMax}
                             style={{
                                 margin: '0 16px',
                             }}
