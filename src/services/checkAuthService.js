@@ -11,6 +11,7 @@ const checkAuthService = async (user) => {
         user.setIsAuth(true);
 
     } catch (e) {
+        return false
         console.log(e);
     }
     return true
