@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {Alert, Button, DatePicker, Form, Input, notification, Space, Typography} from "antd";
+import {Alert, Button, DatePicker, Form, Input, Modal, notification, Space, Typography} from "antd";
 import onCreate from "../../services/userService/authService";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
@@ -61,7 +61,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     },
                 ]}
             >
-                <Input.Password  maxLength={100}/>
+                <Input.Password maxLength={100}/>
             </Form.Item>
 
             <Form.Item
@@ -84,7 +84,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     }),
                 ]}
             >
-                <Input.Password  maxLength={100}/>
+                <Input.Password maxLength={100}/>
             </Form.Item>
             <Form.Item
                 hidden={!isRegistration}
@@ -111,7 +111,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     },
                 ]}
             >
-                <Input  maxLength={50}/>
+                <Input maxLength={50}/>
             </Form.Item>
             <Form.Item
                 hidden={!isRegistration}
@@ -131,7 +131,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
 
             <Space size={'large'}>
                 <SmartCaptcha sitekey={process.env.REACT_APP_CAPTCHA_KEY}
-                              onSuccess={() => setCaptch_check(true)} />
+                              onSuccess={() => setCaptch_check(true)}/>
             </Space>
             <div hidden={isRegistration}
                  style={{textAlign: 'right', cursor: 'pointer'}}
@@ -149,7 +149,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                                 .validateFields()
                                 .then((values) => {
                                     if (captch_check) {
-                                        if(isRegistration) {
+                                        if (isRegistration) {
                                             const data = passwordCheck(values.password);
                                             if (data !== true) {
                                                 return notification.error({
@@ -160,6 +160,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                                         }
                                         onCreate(values, user, isRegistration, (!!idCreator ? 'CONTROLLER' : 'USER'), idCreator)
                                             .then(result => {
+
                                                 if (result === true) {
                                                     console.log(result);
                                                     setIsRegistration(false);
@@ -167,9 +168,30 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                                                     onCancel();
                                                     setMessage('');
                                                 } else {
+                                                    if (result.response.status === 451) {
+                                                        form.resetFields();
+                                                        onCancel();
+                                                        return Modal.error({
+                                                            title: 'Ваш аккаунт заблокирован!',
+                                                            content: 'В связи с нарушением прав платформы ваш аккаунт заблокирован на площадке. Если вы считаете, что это ошибка, напишите нам на почту MeropsRoot@hotmail.com',
+                                                        });
+                                                    }
                                                     isRegistration ?
                                                         setMessage("Данный email уже зарегистрирован") :
                                                         setMessage("Логин и пароль не совпадают");
+                                                }
+                                            })
+                                            .catch(error => {
+                                                if (error.response && error.response.status === 451) {
+                                                    return Modal.error({
+                                                        title: 'Ваш аккаунт заблокирован',
+                                                        content: 'some messages...some messages...',
+                                                    });
+                                                    setMessage("Ошибка 451: Недоступно по юридическим причинам.");
+                                                } else {
+                                                    // Обработка других ошибок
+                                                    console.error("Произошла ошибка:", error);
+                                                    // Дополнительные действия по обработке ошибок, если необходимо
                                                 }
                                             });
                                     } else {

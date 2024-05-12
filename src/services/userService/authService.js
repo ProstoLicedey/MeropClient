@@ -25,6 +25,7 @@ const onCreate = async (values, user, isRegistration, role, creatorId) => {
             user.setIsAuth(true);
             localStorage.setItem('token', data.accessToken)
         }
+
         return true;
     } catch (e) {
         return e;

@@ -381,7 +381,7 @@ const CreateEvent = () => {
                                                         <Col span={8}>
                                                             <Form.Item name={[name, 'price']}>
                                                                 <InputNumber
-
+                                                                    maxLength={7}
                                                                     min={0}
                                                                     addonAfter="₽"
                                                                     placeholder="Цена"

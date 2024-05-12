@@ -2,9 +2,9 @@ import React, {useContext} from 'react';
 import {
     BarcodeOutlined,
     CalendarOutlined,
-    EnvironmentOutlined,
-    LogoutOutlined, MenuFoldOutlined,
-    PoweroffOutlined,
+    EnvironmentOutlined, FundOutlined, FundProjectionScreenOutlined,
+    LogoutOutlined, MenuFoldOutlined, OrderedListOutlined,
+    PoweroffOutlined, RollbackOutlined,
     TeamOutlined,
     UserOutlined
 } from '@ant-design/icons';
@@ -52,13 +52,40 @@ const menuController = [
         label: 'Обо мне'
     }
 ];
+const menuAdmin = [
+    {
+        key: 'eventAdmin',
+        icon: <CalendarOutlined/>,
+        label: 'Мероприятия'
+    },
+    {
+        key: 'usersAdmin',
+        icon: <UserOutlined />,
+        label: 'Пользователи'
+    },
+    {
+        key: 'refunds',
+        icon: <RollbackOutlined />,
+        label: 'Возврат билетов'
+    },
+    {
+        key: 'marketing',
+        icon: <FundOutlined />,
+        label: 'Реклама'
+    },
+    {
+        key: 'typeEvent',
+        icon: <OrderedListOutlined />,
+        label: 'Виды мероприятий'
+    },
+];
 
 const CreatorMenu = ({close}) => {
     const {creator, user} = useContext(Context);
 
     let items = []
     if(user.user.role == 'ADMIN'){
-
+        items = menuAdmin
     }
     else  if(user.user.role == 'CONTROLLER'){
         items = menuController

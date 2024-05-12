@@ -9,6 +9,9 @@ const reciveCodeService = async (values) => {
             return true;
         }
     } catch (e) {
+        if (e === 451){
+            return 451
+        }
         return e
     }
 };
