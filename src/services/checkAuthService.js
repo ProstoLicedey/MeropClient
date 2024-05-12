@@ -13,6 +13,7 @@ const checkAuthService = async (user) => {
     } catch (e) {
         return false
         console.log(e);
+        return false
     }
     return true
 

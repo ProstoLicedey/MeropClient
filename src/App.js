@@ -24,7 +24,7 @@ const App = observer (() =>  {
     useEffect(() => {
 
         if(localStorage.getItem('token')){
-            checkAuthService(user).then(()=> setLoading(false))
+             checkAuthService(user).finally(()=> setLoading(false))
         }
     }, []);
 
