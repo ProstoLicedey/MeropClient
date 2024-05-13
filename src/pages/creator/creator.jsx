@@ -14,12 +14,14 @@ import Buyers from "../../components/creator/tables/buyers";
 import {logout} from "../../http/userAPI";
 import {useMediaQuery} from "react-responsive";
 import {MenuFoldOutlined} from "@ant-design/icons";
+import Marketing from "../../components/creator/tables/marketing";
 
 
 const PLANS = {
     events: MeropTable,
     zal: Halls,
     buyers: Buyers,
+    marketing: Marketing,
     controler: ControllerCreator,
     aboutMe: Profile,
 }

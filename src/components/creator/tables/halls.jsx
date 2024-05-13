@@ -213,7 +213,7 @@ const Halls = () => {
     ];
 
     return (
-        <Space direction="vertical" style={{textAlign: 'left',  backgroundColor: 'white', marginLeft:"5%", marginTop:"5%",  width:'100%'}}>
+        <Space direction="vertical" style={{textAlign: 'left',  backgroundColor: 'white', marginLeft:"1%", marginTop:"1%",  width:'100%'}}>
             <Title level={2}>
                 Залы
             </Title>

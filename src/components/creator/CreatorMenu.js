@@ -30,6 +30,11 @@ const menuCreator = [
         label: 'Покупки'
     },
     {
+        key: 'marketing',
+        icon: <FundOutlined />,
+        label: 'Реклама'
+    },
+    {
         key: 'controler',
         icon: <BarcodeOutlined/>,
         label: 'Контролеры'

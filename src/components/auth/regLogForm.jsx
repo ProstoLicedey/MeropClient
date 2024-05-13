@@ -173,7 +173,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                                                         onCancel();
                                                         return Modal.error({
                                                             title: 'Ваш аккаунт заблокирован!',
-                                                            content: 'В связи с нарушением прав платформы ваш аккаунт заблокирован на площадке. Если вы считаете, что это ошибка, напишите нам на почту MeropsRoot@hotmail.com',
+                                                            content: `В связи с нарушением прав платформы ваш аккаунт заблокирован на площадке. Если вы считаете, что это ошибка, напишите нам на почту ${process.env.REACT_APP_EMAIL}`,
                                                         });
                                                     }
                                                     isRegistration ?

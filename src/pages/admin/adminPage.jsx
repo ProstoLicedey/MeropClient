@@ -8,10 +8,9 @@ import Sider from "antd/es/layout/Sider";
 import {MenuFoldOutlined} from "@ant-design/icons";
 import UsersAdmin from "../../components/admin/usersAdmin/usersAdmin";
 import RefundsAdmin from "../../components/admin/refundsAdmin/refundsAdmin";
-import MarketingAdmin from "../../components/admin/marketingAdmin";
-
 import EventAdmin from "../../components/admin/eventAdmin/eventAdmin";
 import TypesAdmin from "../../components/admin/typesAdmin/typesAdmin";
+import MarketingAdmin from "../../components/admin/marketing/marketingAdmin";
 
 const PLANS = {
     eventAdmin: EventAdmin,
