@@ -1,11 +1,20 @@
 import React, {useContext, useState} from 'react';
-import {Button, Card, Flex, message, notification, Space} from 'antd';
+import {Button, Card, Flex, message, notification, Result, Space} from 'antd';
 import { observer } from 'mobx-react-lite';
 import { Context } from '../../index';
 import Title from "antd/es/typography/Title";
 import {CheckedHttp, checkTicket, unCheckTicket} from "../../http/ticketAPI";
 const CheckCardController = ({ style }) => {
     const { ticket, user } = useContext(Context);
+    if(ticket.controllerTicket === true){
+        return(
+            <Result
+                status="success"
+                title="Успешно"
+                subTitle="Билет успешно использован, вы можете проверять билеты дальше"
+            />
+        )
+    }
     if (!ticket.controllerTicket) {
         return null;
     }
@@ -14,7 +23,8 @@ const CheckCardController = ({ style }) => {
     const  Checked = () =>{
         CheckedHttp( ticket.controllerTicket.number,  user.user.id ).finally(
             () =>{
-                ticket.setControllerTicket(null);
+                ticket.setControllerTicket(true);
+
             }
         )
 

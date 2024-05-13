@@ -47,6 +47,7 @@ const UserTable = () => {
             dataIndex: 'field',
             key: 'field',
             width: '40%',
+            render: (text) => <strong>{text}</strong>,
         },
         {
             dataIndex: 'value',
@@ -72,6 +73,7 @@ const UserTable = () => {
         <div>
             {blocked && (<Alert message={"Внимание! Пользователь был заблокирован"} type="warning" showIcon style={{maxWidth:400}} />) }
         <Table
+            showHeader={false}
             columns={columns}
             dataSource={user.userAdmin}
             pagination={false}
@@ -90,7 +92,7 @@ const UserTable = () => {
                         block
                         style={{ backgroundColor: blocked ?  '#722ed1':  '#ff4d4f'}}
                     >
-                        Заблокировать аккаунт
+                        {blocked ?"  Разблокировать аккаунт" : "Заблокировать аккаунт"}
                     </Button>
 
                 </Popconfirm>

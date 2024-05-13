@@ -31,3 +31,22 @@ export  const  blockUser = async (email) =>{
 
     return response.data
 }
+export const searchEventAdmin = async (input) => {
+    if (!input) {
+        return []; // возвращаем пустой массив, так как запрос не нужно отправлять
+    }
+
+    const response = await $authHost.get('api/event/searchAdmin/', { params: { input } });
+
+    return response.data;
+}
+export  const  getEventAdmin = async (id) =>{
+    const  response = await $authHost.get('api/event/getForAdmin/' + id)
+
+    return response.data
+}
+export  const  blockEvent = async (id) =>{
+    const  response = await $authHost.put('api/event/block/' + id)
+
+    return response.data
+}

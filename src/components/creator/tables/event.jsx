@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {PlusOutlined, SearchOutlined} from '@ant-design/icons';
-import {Button, Flex, Input, notification, Popconfirm, Space, Spin, Table, Tooltip} from 'antd';
+import {Alert, Button, Flex, Input, notification, Popconfirm, Progress, Space, Spin, Table, Tooltip} from 'antd';
 import {deleteEvent, fetchEvent, fetchOneEvent, fetchTypes} from "../../../http/eventAPI";
 import {deleteController, getEventCreator} from "../../../http/creactorAPI";
 import {Context} from "../../../index";
@@ -163,12 +163,16 @@ const Event = () => {
             )
         },
         {
-            title: 'Билетов осталось',
+            title: 'Билетов забронированно',
             dataIndex: 'mests',
             key: 'mests',
             width: '5%',
-            sorter: (a, b) => a.title.length - b.title.length,
-            ...getColumnSearchProps('title'),
+            render: (mests, record) => (
+                <>
+                    <div style={{ textAlign: 'center' }}>{mests}</div>
+                    <Progress percent={record.percent} steps={3} />
+                </>
+            )
         },
         {
             title: 'Место проведения',
@@ -189,29 +193,34 @@ const Event = () => {
         {
             key: 'actions',
             render: (record) => {
-                return (
-                    <Space size="large" style={{
-                        display: "flex",
-                        flexFlow: "column"
-                    }}>
-                        <Button style={{
-                            borderColor: 'green',
-                            color: 'green'
-                        }}
-                                onClick={() =>
-                                navigate(`${CREATEEVENT_ROUTE}/${record.id}`)
-                                }>
-                            Изменить
-                        </Button>
-                        <Popconfirm
-                            title="Вы уверены, что хотите удалить мероприятие? Все билеты на него будут также удалены!"
-                            onConfirm={() => confirmOneGood(record.id)}
-                            okText="Да"
-                            cancelText="Отмена">
-                            <Button danger>Удалить</Button>
-                        </Popconfirm>
-                    </Space>
-                )
+                // Проверка значения свойства status
+                if (record.status === 'BLOCKED') {
+                    return  <Tooltip title="Данное мероприятие было заблокировано в связи с нарушнием правил площадким"> <Alert message="Заблокированно площадкой" type="error" showIcon /></Tooltip>;
+                } else {
+                    return (
+                        <Space size="large" style={{
+                            display: "flex",
+                            flexFlow: "column"
+                        }}>
+                            <Button style={{
+                                borderColor: 'green',
+                                color: 'green'
+                            }}
+                                    onClick={() =>
+                                        navigate(`${CREATEEVENT_ROUTE}/${record.id}`)
+                                    }>
+                                Изменить
+                            </Button>
+                            <Popconfirm
+                                title="Вы уверены, что хотите удалить мероприятие? Все билеты на него будут также удалены!"
+                                onConfirm={() => confirmOneGood(record.id)}
+                                okText="Да"
+                                cancelText="Отмена">
+                                <Button danger>Удалить</Button>
+                            </Popconfirm>
+                        </Space>
+                    );
+                }
             },
             // Условие для отображения столбца только когда archive === false
             ...(archive
@@ -240,11 +249,14 @@ const Event = () => {
                 </Tooltip>
             </Space>
             <Table
-                style={{ cursor: 'pointer', overflowX: 'auto' }} // Add overflowX: 'auto' to enable horizontal scrolling
+                style={{overflowX: 'auto' }} // Add overflowX: 'auto' to enable horizontal scrolling
                 columns={columns}
                 dataSource={creator.events}
                 onRow={(record) => ({
-                    // onClick: () => onRowClick(record)
+                                        style: {
+                        background: record.status === 'BLOCKED' ? '#fff1f0' : 'inherit', // Красный цвет фона, если status === 'BLOCKED'
+                        // Другие стили, если нужно
+                    },
                 })}
                 responsive={{ xs: true, sm: true, md: true, lg: true, xl: true, xxl: true }}
             />

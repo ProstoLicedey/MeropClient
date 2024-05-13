@@ -1,11 +1,11 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Alert, Button, Input, Space} from "antd";
 import Title from "antd/es/typography/Title";
-import TicketRefunds from "../refunds/ticketRefunds";
 import {Context} from "../../../index";
 import {getTicketAdmin, getUserAdmin} from "../../../http/adminAPI";
 import {SearchOutlined} from "@ant-design/icons";
 import UserTable from "./userTable";
+
 
 const UsersAdmin = () => {
 
@@ -13,6 +13,15 @@ const UsersAdmin = () => {
     const [status, setStatus] = useState('');
     const [message, setMessage] = useState('');
     const {user} = useContext(Context);
+
+
+    useEffect(() => {
+
+        if (!!user.userBroadcast) {
+            setEmail(user.userBroadcast);
+
+        }
+    }, [user.userBroadcast]);
 
     const poiskUser = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,6 +70,7 @@ const UsersAdmin = () => {
                     size="large"
                     placeholder="Email пользователя"
                     type="email"
+                    value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <Button

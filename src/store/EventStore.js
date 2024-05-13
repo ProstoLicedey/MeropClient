@@ -7,6 +7,8 @@ export default class EventStore {
         this._ratings = []
         this._events = []
         this._event = {}
+        this._eventList = []
+        this._eventAdmin = null
 
 
         this._selectedType = {}
@@ -76,6 +78,12 @@ export default class EventStore {
     setCities(cities) {
         this._cities = cities
     }
+    setEventList(eventList) {
+        this._eventList = eventList
+    }
+    setEventAdmin(eventAdmin) {
+        this._eventAdmin = eventAdmin
+    }
 
 
     get types() {
@@ -127,5 +135,11 @@ export default class EventStore {
 
     get cities() {
         return this._cities
+    }
+    get eventList() {
+        return this._eventList
+    }
+    get eventAdmin() {
+        return this._eventAdmin
     }
 }

@@ -6,13 +6,11 @@ import {Button, Drawer, Form, Layout} from "antd";
 import CreatorMenu from "../../components/creator/CreatorMenu";
 import Sider from "antd/es/layout/Sider";
 import {MenuFoldOutlined} from "@ant-design/icons";
-import EventAdmin from "../../components/admin/eventAdmin";
-import UsersAdmin from "../../components/admin/users/usersAdmin";
-import RefundsAdmin from "../../components/admin/refunds/refundsAdmin";
+import UsersAdmin from "../../components/admin/usersAdmin/usersAdmin";
+import RefundsAdmin from "../../components/admin/refundsAdmin/refundsAdmin";
 import MarketingAdmin from "../../components/admin/marketingAdmin";
 import TypesAdmin from "../../components/admin/typesAdmin";
-import {Context} from "../../index";
-import {fetchCity, fetchEvent, fetchTypes} from "../../http/eventAPI";
+import EventAdmin from "../../components/admin/eventAdmin/eventAdmin";
 
 const PLANS = {
     eventAdmin: EventAdmin,
@@ -41,11 +39,11 @@ const AdminPage = () => {
         // Подписываемся на событие изменения hash при монтировании компонента
         window.addEventListener('hashchange', handleHashChange);
 
-        // Убираем подписку при размонтировании компонента
+
         return () => {
             window.removeEventListener('hashchange', handleHashChange);
         };
-    }, []); // Пустой массив зависимостей, чтобы хук useEffect выполнился только при монтировании
+    }, []);
 
 
     const PlanView = PLANS[selectedPlan];

@@ -16,6 +16,7 @@ import {CalendarOutlined} from "@ant-design/icons";
 import IconCalendar from "../../assets/icon/CalendarIcon";
 import MoneyIcon from "../../assets/icon/MoneyIcon";
 import {ReCAPTCHA} from "react-google-recaptcha";
+import ErrorPage from "../ErrorPage";
 
 const {Text, Link} = Typography;
 const {Panel} = Collapse;
@@ -31,11 +32,12 @@ const Event = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetchOneEvent(id).then(data => event.setEvent(data));
+        fetchOneEvent(id)
+            .then(data => event.setEvent(data))
+            .catch((e)=> console.log(e))
     }, []);
-
-    if (!event || !event.event) {
-        return null; // Возвращаем null, если нет данных о событии или свойства event.event
+    if (!event || event.event.length === 0 || !id) {
+        return <ErrorPage/>;
     }
 
     const handleExpand = () => {
