@@ -6,6 +6,7 @@ import Carouselcontroller from "./Carouselcontroller";
 import CheckCardController from "./CheckCardController";
 import Title from "antd/es/typography/Title";
 import {observer} from "mobx-react-lite";
+import {SearchOutlined} from "@ant-design/icons";
 
 const ControllerComponent = () => {
     const [ticketNumber, setTicketNumber] = useState('');
@@ -57,9 +58,14 @@ const ControllerComponent = () => {
                     type="number"
                     onChange={(e) => setTicketNumber(e.target.value)}
                 />
-                <Button type="primary" size="large" onClick={postTicket}>
-                    Ввод
-                </Button>
+                <Button
+                    type="primary"
+                    size="large"
+                    onClick={postTicket}
+                    style={{backgroundColor: '#722ed1'}}
+                    shape="circle"
+                    icon={<SearchOutlined />}
+                />
             </Space>
 
             {ticket.controllerTicket === null ? <Carouselcontroller /> : <CheckCardController style={{ marginLeft: 20 }} />}

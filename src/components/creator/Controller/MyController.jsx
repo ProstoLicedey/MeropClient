@@ -95,15 +95,13 @@ const MyController = () => {
                 <Space>
                     <Button
                         type="primary"
-                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                        icon={<SearchOutlined/>}
                         size="small"
-                        style={{
-                            width: 90,
-                        }}
-                    >
-                        Найти
-                    </Button>
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        style={{backgroundColor: '#722ed1'}}
+                        shape="circle"
+                        icon={<SearchOutlined />}
+                    />
+
                     <Button
                         onClick={() => clearFilters && handleReset(clearFilters)}
                         size="small"

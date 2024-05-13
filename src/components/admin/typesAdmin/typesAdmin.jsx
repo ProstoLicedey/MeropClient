@@ -2,12 +2,12 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Button, Form, List, notification, Popconfirm, Space} from "antd";
 import Title from "antd/es/typography/Title";
 import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import {Context} from "../../index";
-import {deleteEvent, fetchTypes} from "../../http/eventAPI";
+
+import {deleteEvent, fetchTypes} from "../../../http/eventAPI";
 import {observer} from "mobx-react-lite";
-import CollectionCreateForm from "../auth/authModals";
-import TypesModal from "./types/typesModal";
-import {deleteType} from "../../http/adminAPI";
+import {deleteType} from "../../../http/adminAPI";
+import {Context} from "../../../index";
+import TypesModal from "./typesModal";
 
 const TypesAdmin = () => {
     const  {event} = useContext(Context)

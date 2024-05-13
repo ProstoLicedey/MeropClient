@@ -9,8 +9,9 @@ import {MenuFoldOutlined} from "@ant-design/icons";
 import UsersAdmin from "../../components/admin/usersAdmin/usersAdmin";
 import RefundsAdmin from "../../components/admin/refundsAdmin/refundsAdmin";
 import MarketingAdmin from "../../components/admin/marketingAdmin";
-import TypesAdmin from "../../components/admin/typesAdmin";
+
 import EventAdmin from "../../components/admin/eventAdmin/eventAdmin";
+import TypesAdmin from "../../components/admin/typesAdmin/typesAdmin";
 
 const PLANS = {
     eventAdmin: EventAdmin,
