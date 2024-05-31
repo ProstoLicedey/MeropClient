@@ -26,6 +26,11 @@ export  const  getUserAdmin = async (email) =>{
 
     return response.data
 }
+export  const  getUserAllAdmin = async () =>{
+    const  response = await $authHost.get('api/user/getAdmin/')
+
+    return response.data
+}
 export  const  blockUser = async (email) =>{
     const  response = await $authHost.put('api/user/block/',  { email })
 

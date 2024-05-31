@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Button, Drawer, Empty, Space} from "antd";
+import {Button, Drawer, Empty, notification, Space} from "antd";
 import {getEntrance} from "../../http/entranceAPI";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
@@ -15,12 +15,19 @@ const DrawerBuy = ({open, onClose, entranceId}) => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if(event.event.entranceId){
-            getEntrance(event.event.entranceId, event.event.id).then(data => hall.setEntrance(data))
+
+        if(event.event.entrance?.id){
+            getEntrance(event.event.entrance.id, event.event.id).then(data => hall.setEntrance(data))
         }
     }, [event.event]);
 
     const  addOrder = () =>{
+        if(hall.ticket.length == 0){
+            return notification.warning({
+                message: 'Пожалуйста выберите билеты',
+            });
+
+        }
         const  formData = new FormData
         formData.append('userId', user.user.id)
         formData.append('tickets', JSON.stringify(hall.ticket))

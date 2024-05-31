@@ -7,6 +7,7 @@ export  default  class UserStore{
         this._orders = []
         this._userAdmin = null
         this._userBroadcast = null
+        this._allUsers = []
         makeAutoObservable(this)
     }
 
@@ -36,6 +37,10 @@ export  default  class UserStore{
         this._userBroadcast = userBroadcast
 
     }
+    setAllUsers(allUsers){
+        this._allUsers = allUsers
+
+    }
     get isAuth(){
         return this._isAuth
     }
@@ -54,6 +59,9 @@ export  default  class UserStore{
     }
     get userBroadcast(){
         return this._userBroadcast
+    }
+    get allUsers(){
+        return this._allUsers
     }
 
 }

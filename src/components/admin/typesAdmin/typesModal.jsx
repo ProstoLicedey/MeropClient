@@ -74,14 +74,6 @@ const TypesModal = ({open, onCancel}) => {
                        Добавить
                     </Button>
                 </Form.Item>
-                <Input
-
-                    size="large"
-                    placeholder="Номер билета"
-                    maxLength={7}
-                    type="email"
-
-                />
             </Form>
         </Modal>
     );

@@ -10,8 +10,8 @@ const onCreate = async (values, user, isRegistration, role, creatorId) => {
             data = await registration(
                 values.email,
                 values.password,
-                values.name,
-                values.surname,
+                values.name.trim(),
+                values.surname.trim(),
                 values.birthday,
                 role,
                 creatorId

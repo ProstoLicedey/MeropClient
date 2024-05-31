@@ -1,5 +1,19 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Alert, Button, Card, Flex, Form, Input, InputNumber, Select, Space, Tooltip, Tour, Typography} from "antd";
+import {
+    Alert,
+    Button,
+    Card,
+    ConfigProvider,
+    Flex,
+    Form,
+    Input,
+    InputNumber,
+    Select,
+    Space,
+    Tooltip,
+    Tour,
+    Typography
+} from "antd";
 import {CloseOutlined, QuestionOutlined, SearchOutlined} from "@ant-design/icons";
 import Title from "antd/es/typography/Title";
 import onCreate from "../../../services/userService/authService";
@@ -9,6 +23,7 @@ import HallPhoto from "../../../assets/Hall.png";
 import SliderPhoto from "../../../assets/Slider.png";
 import {observer} from "mobx-react-lite";
 import {getCityDaData} from "../../../http/cityAPi";
+import ruRU from "antd/es/locale/ru_RU";
 
 
 const CreateEntrance = ({Close}) => {
@@ -41,7 +56,7 @@ const CreateEntrance = ({Close}) => {
         });
     };
     const getCity = (inputValue) => {
-        if (inputValue.length > 3) {
+        if (inputValue.length > 2) {
             getCityDaData(inputValue).then(data => hall.setCity(data))
         }
     };
@@ -297,11 +312,12 @@ const CreateEntrance = ({Close}) => {
                     {!!hall.hallUpdate?.id ? "Изменить" : "Создать"}
                 </Button>
             </Form.Item>
-
+            <ConfigProvider locale={ruRU}>
             <Tour open={open}
                   onClose={() => setOpen(false)}
                   steps={steps}
             />
+            </ConfigProvider>
         </Form>
     );
 };

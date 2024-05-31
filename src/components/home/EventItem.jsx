@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Card, Typography} from "antd";
 import Meta from "antd/es/card/Meta";
 import {observer} from "mobx-react-lite";
@@ -7,21 +7,32 @@ import {EVENT_ROUTE} from "../../utils/consts";
 import {useNavigate} from "react-router-dom";
 import 'moment/locale/ru';
 import * as events from "events";
+import ControllerComponent from "../controller/ControllerComponent";
+import Profile from "../user/profile";
+import PlaceHolder from "../../assets/placeholder.png";
 
 const {Text, Title} = Typography
 
+
+
 const EventItem = ({thisEvent}) => {
+
+    const [src, setSrc] = useState(EVENT_ROUTE + '/' + thisEvent.id);
     const navigate = useNavigate()
+    if (!thisEvent.title ||  src == null){
+        return null;
+    }
+
     return (
         <Card
             hoverable
             style={{width: 240}}
-            onClick={() => navigate(EVENT_ROUTE + '/' + thisEvent.id)}
+            onClick={() => navigate(src)}
             cover={
                 <div style={{position: 'relative', paddingBottom: '150%'}}>
                     <img
                         alt="photo"
-                        src={process.env.REACT_APP_API_URL + thisEvent.img}
+                        src={ thisEvent.img? process.env.REACT_APP_API_URL + thisEvent.img : PlaceHolder}
                         style={{
                             position: 'absolute',
                             top: 0,
@@ -46,6 +57,7 @@ const EventItem = ({thisEvent}) => {
                     >
                         от {thisEvent.minPrice}₽
                     </div>
+
                 </div>
             }
         >
@@ -72,8 +84,18 @@ const EventItem = ({thisEvent}) => {
                 {
                     thisEvent.hall ? thisEvent.hall.name : thisEvent.entrance ? thisEvent.entrance.name : null
                 }
-
             </Title>
+            { thisEvent.marketings.length >0 && thisEvent.marketings[0].status ==='ACTIVE' &&
+                (<Text
+                disabled
+                style={{
+                    position: 'absolute',
+                    bottom: '10px',
+                    right: '10px',
+                    padding: '5px',
+
+                }}
+            >Реклама</Text>)}
         </Card>
     )
 

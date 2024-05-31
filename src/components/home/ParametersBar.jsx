@@ -17,14 +17,17 @@ const ParametersBar = observer(() => {
     const today = dayjs();
     const {event} = useContext(Context)
     const [priceMax, setPriceMax] = useState(1000);
+    const [city, setCity] = useState('');
+    const [data, setData] = useState('');
     const getBackgroundColor = (type) => {
         return type.value === event.selectedType.value ? '#b37feb' : 'inherit';
     };
     const handleDateChange = (dates) => {
-
+        setData(dates)
         event.setSelectedDate(dates)
-
     };
+
+
 
 
     useEffect(() => {
@@ -65,18 +68,20 @@ const ParametersBar = observer(() => {
                 }}>
                     <Title level={4}>Город</Title>
                     <Link onClick={() => {
-                        event.setPage(1)
-                        event.setSelectedType({})
-                        event.setSelectedCity({})
-                        event.setSelectedDate({})
-                        event.setSelectedPrice({})
-                        event.setSerchTitle(null)
+                        event.setPage(1);
+                        event.setSelectedType({});
+                        event.setSelectedCity(null);
+                        event.setSelectedDate(null);
+                        event.setSelectedPrice({});
+                        setCity('')
+                        setData('')
+                    }}>Сброс</Link>
 
-                    }}>Сброс
-                    </Link>
+
+
                 </Space>
                 <Select
-
+                    id="city-select" // Добавляем идентификатор
                     showSearch
                     style={{
                         width: "100%",
@@ -87,9 +92,15 @@ const ParametersBar = observer(() => {
                     filterSort={(optionA, optionB) =>
                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                     }
-                    onChange={(data) => event.setSelectedCity(data)}
+                    value={city}
+                    onChange={(data) => {
+                        setCity(data)
+                        event.setSelectedCity(data)
+                    }}
+
                     options={event.cities}
                 />
+
             </div>
             <div>
                 <Title level={4}>Категории</Title>
@@ -109,7 +120,7 @@ const ParametersBar = observer(() => {
             <div>
                 <Title level={4}>Даты</Title>
                 <ConfigProvider locale={ruRU}>
-                    <RangePicker minDate={today} locale={ruRU} onChange={handleDateChange}/>
+                    <RangePicker id="date" name= "date" minDate={today} locale={ruRU} onChange={handleDateChange} value={data} />
                 </ConfigProvider>
             </div>
 

@@ -5,6 +5,8 @@ import {Context} from "../../../index";
 import {getTicketAdmin, getUserAdmin} from "../../../http/adminAPI";
 import {SearchOutlined} from "@ant-design/icons";
 import UserTable from "./userTable";
+import UsersTable from "./usersTable";
+import {observer} from "mobx-react-lite";
 
 
 const UsersAdmin = () => {
@@ -22,6 +24,13 @@ const UsersAdmin = () => {
 
         }
     }, [user.userBroadcast]);
+
+    useEffect(() => {
+
+        if (email.length == 0) {
+            user.setUserAdmin(null)
+        }
+    }, [email]);
 
     const poiskUser = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,6 +75,7 @@ const UsersAdmin = () => {
             <Space>
 
                 <Input
+                    allowClear
                     status={status}
                     size="large"
                     placeholder="Email пользователя"
@@ -83,10 +93,10 @@ const UsersAdmin = () => {
                 />
 
             </Space>
-            <UserTable/>
+            {user.userAdmin ? ( <UserTable/>) : (<UsersTable/>)}
 
         </Space>
     );
 };
 
-export default UsersAdmin;
+export default observer(UsersAdmin);

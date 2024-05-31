@@ -21,17 +21,20 @@ const EntranceLine = ({thisEntranceOption}) => {
     };
 
     const counterPlus = () => {
-        if (
-            counter < thisEntranceOption.entranceOptionPrice.seatsLeft &&
-            counter < 10
-        ) {
+        if( counter >= thisEntranceOption.entranceOptionPrice.seatsLeft){
+            return notification.info({
+                message: 'Таких билетов больше не осталось :(',
+            })
+        }
+        if( counter >= 5){
+            return notification.error({
+                message: 'Нельзя забронировать больше 5 билетов за раз',
+            })
+        }
             setCounter(counter + 1);
             //addTicket(thisEntranceOption.entranceOptionPrice.id, event, hall);
             addTicket( event, hall, thisEntranceOption.entranceOptionPrice.id);
             console.log(hall.ticket)
-        } else {
-            setDisable(true);
-        }
     };
 
     return (

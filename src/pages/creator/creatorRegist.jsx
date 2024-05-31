@@ -141,7 +141,12 @@ const CreatorRegist = () => {
                                         form
                                             .validateFields()
                                             .then((values) => {
-
+                                                if (!values.password.trim() || !values.name.trim() || !values.surname.trim()) {
+                                                    return notification.error({
+                                                        message: 'Ошибка',
+                                                        description: 'Заполните поля верно'
+                                                    });
+                                                }
                                                 const data = passwordCheck(values.password);
                                                 if (data !== true) {
                                                     return notification.error({

@@ -1,6 +1,19 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
-    Alert, Button, Card, Form, Input, InputNumber, notification, Segmented, Select, Slider, Space, Tooltip, Tour
+    Alert,
+    Button,
+    Card,
+    ConfigProvider,
+    Form,
+    Input,
+    InputNumber,
+    notification,
+    Segmented,
+    Select,
+    Slider,
+    Space,
+    Tooltip,
+    Tour
 } from "antd";
 import {Context} from "../../../index";
 import {CloseOutlined, QuestionOutlined} from "@ant-design/icons";
@@ -11,6 +24,7 @@ import SliderPhoto from "../../../assets/Slider.png";
 import {createHall, updateHall} from "../../../http/hallAPI";
 import {getCityDaData} from "../../../http/cityAPi";
 import {observer} from "mobx-react-lite";
+import ruRU from "antd/es/locale/ru_RU";
 
 
 //создания массива для проверки
@@ -367,10 +381,12 @@ const CreateZal = ({Close}) => {
                 </Button>
 
             </Form.Item>
+            <ConfigProvider locale={ruRU}>
             <Tour open={open}
                   onClose={() => setOpen(false)}
                   steps={steps}
             />
+            </ConfigProvider>
         </Form>);
 };
 

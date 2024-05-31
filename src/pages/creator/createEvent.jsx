@@ -53,6 +53,7 @@ const formItemLayout = {
 const CreateEvent = () => {
     dayjs.locale('ru');
     const today = dayjs();
+    const nextYear = today.add(1, 'year');
     const {id} = useParams();
     const {event, creator, user} = useContext(Context)
     const [fileUploaded, setFileUploaded] = useState(false);
@@ -64,6 +65,7 @@ const CreateEvent = () => {
     const titleText = id == undefined ? "Создание мероприятия" : "Редактирование мероприятия";
     const [fileList, setFileList] = React.useState([]);
     const [captch_check, setCaptch_check] = useState(!!id);
+    const [photoCheck, setPhotoCheck] = useState(false);
 
 
     const navigate = useNavigate()
@@ -98,7 +100,7 @@ const CreateEvent = () => {
 
                 const hall = data.hallId ? data.hallId : (data.entranceId ? data.entranceId : null);
                 selectEntranceHall(hall, data.type, data.option)
-
+                setPhotoCheck(true)
             }).catch(error => {
                 return notification.error({
                     message: 'Ошибка получения мероприятия',
@@ -176,7 +178,10 @@ const CreateEvent = () => {
                         title={"Общая информация"}
                         {...formItemLayout}
                         style={{
-                            maxWidth: 600,
+                            maxWidth: '100%',
+                            width: '100%',
+                            padding: '0 16px',
+                            boxSizing: 'border-box',
                         }}
                     >
                         <Form.Item
@@ -189,7 +194,7 @@ const CreateEvent = () => {
                                 },
                             ]}
                         >
-                            <Input showCount maxLength={50}/>
+                            <Input showCount maxLength={50} style={{ width: '100%' }} />
                         </Form.Item>
 
                         <Form.Item
@@ -203,16 +208,17 @@ const CreateEvent = () => {
                             ]}
                         >
                             <TextArea
-                                showCount maxLength={5000}
+                                showCount
+                                maxLength={5000}
                                 autoSize={{
                                     minRows: 3,
                                     maxRows: 15,
                                 }}
+                                style={{ width: '100%' }}
                             />
                         </Form.Item>
                         <ConfigProvider locale={ruRU}>
                             <Form.Item
-
                                 label="Дата и время"
                                 name="dateTime"
                                 rules={[
@@ -222,36 +228,40 @@ const CreateEvent = () => {
                                         message: 'Укажите когда запанировано мероприятие',
                                     },
                                 ]}
-
                             >
-
-                                <DatePicker minDate={today} showTime format="YYYY-MM-DD HH:mm" style={{width: '100%'}}/>
-
+                                <DatePicker
+                                    minDate={today}
+                                    maxDate={nextYear}
+                                    showTime
+                                    format="YYYY-MM-DD HH:mm"
+                                    style={{ width: '100%' }}
+                                />
                             </Form.Item>
                         </ConfigProvider>
                         <Form.Item
                             label="Изображение"
                             rules={[
                                 {
-                                    required: true,
                                     message: 'Загрузите фото',
                                 },
                             ]}
                         >
-                            <Upload customRequest={handleUpload}
-                                    fileList={fileList}
-                                    maxCount={1}
-                                    listType="picture">
-                                <Button icon={<UploadOutlined/>}>
+                            <Upload
+                                customRequest={handleUpload}
+                                fileList={fileList}
+                                maxCount={1}
+                                onChange={() => setPhotoCheck(true)}
+                                listType="picture"
+                            >
+                                <Button icon={<UploadOutlined />}>
                                     Выбрать изображение (максимум 1)
                                 </Button>
                             </Upload>
                         </Form.Item>
 
                         <Form.Item
-                            label="Тип меропрития"
+                            label="Тип мероприятия"
                             name="typeId"
-
                             rules={[
                                 {
                                     required: true,
@@ -259,7 +269,7 @@ const CreateEvent = () => {
                                 },
                             ]}
                         >
-                            <Select options={event.types}/>
+                            <Select options={event.types} style={{ width: '100%' }} />
                         </Form.Item>
 
                         <Form.Item
@@ -268,32 +278,34 @@ const CreateEvent = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Укажите возрастное органичение мероприятия',
+                                    message: 'Укажите возрастное ограничение мероприятия',
                                 },
                             ]}
                         >
-                            <Select options={event.ratings}/>
+                            <Select options={event.ratings} style={{ width: '100%' }} />
                         </Form.Item>
-                        {!id && (<Form.Item
-                            label="Проверка"
-                            name="captcha"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Необходимо пргойти капчу',
-                                },
-                            ]}
-                        >
-                            <SmartCaptcha sitekey={process.env.REACT_APP_CAPTCHA_KEY_CREATOR}
-                                          onSuccess={() => {
-                                              setCaptch_check(true)
-                                              formEvent.setFieldsValue({captcha: true});
-                                          }}
-
-
-                            />
-                        </Form.Item>)}
+                        {!id && (
+                            <Form.Item
+                                label="Проверка"
+                                name="captcha"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Необходимо пройти капчу',
+                                    },
+                                ]}
+                            >
+                                <SmartCaptcha
+                                    sitekey={process.env.REACT_APP_CAPTCHA_KEY_CREATOR}
+                                    onSuccess={() => {
+                                        setCaptch_check(true);
+                                        formEvent.setFieldsValue({ captcha: true });
+                                    }}
+                                />
+                            </Form.Item>
+                        )}
                     </Form>
+
                 </Space>
             </Col>
             <Col xs={24} sm={12} style={{flex: 1,}}>
@@ -301,7 +313,8 @@ const CreateEvent = () => {
                     <Title level={4}>
                         Схема продажи
                     </Title>
-                    <Tooltip    title={ !!id ? "Зал у созданного мероприятия поменять уже нельзя, если вам это необходимо советуем пересоздать мероприятие" : 'Выберите зал'}>
+                    <Tooltip
+                        title={!!id ? "Зал у созданного мероприятия поменять уже нельзя, если вам это необходимо советуем пересоздать мероприятие" : 'Выберите зал'}>
                         <Select
                             disabled={!!id}
                             style={{width: '100%', maxWidth: 400}}
@@ -313,7 +326,7 @@ const CreateEvent = () => {
                             filterOption={filterOption}
                             options={[
                                 {key: 'new', label: '+Добавить новую схему', value: 'new', style: {color: '#722ed1'}},
-                                ...creator.entranceAll.map((item, index) => ({ key: index, ...item }))
+                                ...creator.entranceAll.map((item, index) => ({key: index, ...item}))
                             ]}
                         />
                     </Tooltip>
@@ -344,55 +357,64 @@ const CreateEvent = () => {
                                                         width: '100%',
                                                         backgroundColor: switchStates[name] === false ? '#f5f5f5' : 'white',
                                                         cursor: switchStates[name] === false ? 'not-allowed' : 'default',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        padding: '10px'
                                                     }}
                                                 >
                                                     <Tooltip title="Убрать категорию в этом мероприятие ">
-                                                        <div style={{position: 'absolute', top: 0, right: 3}}>
-                                                            <Form.Item name={[name, 'switchState']}>
-                                                                {creator.entrance.type == 'Entrance' && (<Switch
-                                                                    defaultChecked={true}
-                                                                    size="small"
-                                                                    {...restField}
-                                                                    checked={switchStates[name]}
-                                                                    onChange={(checked) => {
-                                                                        setSwitchStates((prevStates) => ({
-                                                                            ...prevStates,
-                                                                            [name]: checked
-                                                                        }))
-
-                                                                    }
-                                                                    }
-                                                                />)}
+                                                        <div style={{ position: 'absolute', top: 0, right: 3 }}>
+                                                            <Form.Item
+                                                                name={[name, 'switchState']}
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: 'Укажите стоимость билетов',
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                {creator.entrance.type == 'Entrance' && (
+                                                                    <Switch
+                                                                        defaultChecked={true}
+                                                                        size="small"
+                                                                        {...restField}
+                                                                        checked={switchStates[name]}
+                                                                        onChange={(checked) => {
+                                                                            setSwitchStates((prevStates) => ({
+                                                                                ...prevStates,
+                                                                                [name]: checked
+                                                                            }))
+                                                                        }}
+                                                                    />
+                                                                )}
                                                             </Form.Item>
                                                         </div>
                                                     </Tooltip>
 
-                                                    <Row>
-                                                        <Col span={8}>
-                                                            <Title level={4}
-                                                                   style={{marginRight: '16px', textAlign: 'left'}}>
+                                                    <Row style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+                                                        <Col span={8} style={{ flex: '1 1 auto', marginBottom: '8px' }}>
+                                                            <Title level={4} style={{ marginRight: '16px', textAlign: 'left' }}>
                                                                 {creator.entrance.options[name].name}
                                                             </Title>
                                                         </Col>
-                                                        <Col span={7}>
-                                                            <Text
-                                                                type="secondary">Мест: {creator.entrance.options[name].totalSeats}</Text>
+                                                        <Col span={7} style={{ flex: '1 1 auto', marginBottom: '8px' }}>
+                                                            <Text type="secondary">Мест: {creator.entrance.options[name].totalSeats}</Text>
                                                         </Col>
-                                                        <Col span={8}>
+                                                        <Col span={8} style={{ flex: '1 1 auto', marginBottom: '8px' }}>
                                                             <Form.Item name={[name, 'price']}>
                                                                 <InputNumber
                                                                     maxLength={7}
                                                                     min={0}
                                                                     addonAfter="₽"
                                                                     placeholder="Цена"
-                                                                    style={{marginRight: 40, width: '150px'}}
+                                                                    style={{ marginRight: 40, width: '100%' }}
                                                                     disabled={switchStates[name] === undefined ? false : !switchStates[name]}
-
                                                                 />
                                                             </Form.Item>
                                                         </Col>
                                                     </Row>
                                                 </Card.Grid>
+
                                             ))}
                                         </>
                                     )}
@@ -411,10 +433,16 @@ const CreateEvent = () => {
                                 onClick={() => {
                                     formEvent
                                         .validateFields()
-                                        .then(() => {
+                                        .then((value) => {
                                             form.validateFields()
                                                 .then(() => {
-                                                    if (captch_check) {
+                                                    if (captch_check && photoCheck) {
+                                                        if (!value.title.trim() || !value.description.trim() || !value.dateTime) {
+                                                            return notification.error({
+                                                                message: 'Ошибка',
+                                                                description: 'Заполните поля верно'
+                                                            });
+                                                        }
                                                         if (!id) {
                                                             createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue(), creator.entrance.type)
                                                                 .then((response) => {
@@ -433,24 +461,30 @@ const CreateEvent = () => {
 
                                                                 })
                                                         }
+                                                    } else {
+
+                                                        return notification.warning({
+                                                            message: 'Пожалуйста заполните все поля',
+
+                                                        })
                                                     }
                                                 })
                                                 .catch((error) => {
                                                     return notification.error({
                                                         message: 'Ошибка получения мероприятия',
-                                                        description: error,
+                                                        description: "Пожалуста заполните все поля",
 
                                                     })
-                                                    console.error("Error during form validation:", error);
+
                                                 });
                                         })
                                         .catch((error) => {
+                                            console.error("Error during form validation:", error);
                                             return notification.error({
                                                 message: 'Ошибка валидации  ',
-                                                description: error,
-
+                                                description: "Пожалуста заполните все поля",
                                             })
-                                            console.error("Error during form validation:", error);
+
                                         });
                                 }}
                             >
