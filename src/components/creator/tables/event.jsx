@@ -163,7 +163,7 @@ const Event = () => {
             )
         },
         {
-            title: 'Билетов забронированно',
+            title: 'Билетов забронировано',
             dataIndex: 'mests',
             key: 'mests',
             width: '5%',
@@ -249,6 +249,7 @@ const Event = () => {
                 </Tooltip>
             </Space>
             <Table
+                bordered
                 style={{overflowX: 'auto' }} // Add overflowX: 'auto' to enable horizontal scrolling
                 columns={columns}
                 dataSource={creator.events}

@@ -1,12 +1,12 @@
-import React, {useContext, useState} from 'react';
-import {Context} from "../../index";
-import {getTicket} from "../../http/ticketAPI";
-import {Alert, Button, Input, Space} from "antd";
-import Carouselcontroller from "./Carouselcontroller";
-import CheckCardController from "./CheckCardController";
-import Title from "antd/es/typography/Title";
-import {observer} from "mobx-react-lite";
-import {SearchOutlined} from "@ant-design/icons";
+import React, { useContext, useState } from 'react';
+import { Context } from '../../index';
+import { getTicket } from '../../http/ticketAPI';
+import { Alert, Button, Input, Space } from 'antd';
+import Carouselcontroller from './Carouselcontroller';
+import CheckCardController from './CheckCardController';
+import Title from 'antd/es/typography/Title';
+import { observer } from 'mobx-react-lite';
+import { SearchOutlined } from '@ant-design/icons';
 
 const ControllerComponent = () => {
     const [ticketNumber, setTicketNumber] = useState('');
@@ -33,16 +33,16 @@ const ControllerComponent = () => {
                 console.error('Error fetching ticket:', error);
 
                 // You can also set a specific error message based on the error type or status code
-                if (error.response && (error.response.status === 403)) {
+                if (error.response && error.response.status === 403) {
                     setMessage('Билет не найден, либо это билет не на ваше мероприятие');
                 } else {
                     setMessage('Произошла ошибка при получении билета');
                 }
-            })
+            });
     };
 
     return (
-        <Space direction="vertical" size="small">
+        <Space direction="vertical" size="small" style={{ display: 'flex', flexDirection: 'column' }}>
             <Space>
                 <Title level={2}>Контроль билетов</Title>
             </Space>
@@ -62,13 +62,19 @@ const ControllerComponent = () => {
                     type="primary"
                     size="large"
                     onClick={postTicket}
-                    style={{backgroundColor: '#722ed1'}}
+                    style={{ backgroundColor: '#722ed1' }}
                     shape="circle"
                     icon={<SearchOutlined />}
                 />
             </Space>
 
-            {ticket.controllerTicket === null ? <Carouselcontroller /> : <CheckCardController style={{ marginLeft: 20 }} />}
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                {ticket.controllerTicket === null ? (
+                    <Carouselcontroller />
+                ) : (
+                    <CheckCardController />
+                )}
+            </div>
         </Space>
     );
 };

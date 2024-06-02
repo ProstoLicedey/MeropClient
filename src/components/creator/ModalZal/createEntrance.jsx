@@ -96,12 +96,12 @@ const CreateEntrance = ({Close}) => {
         },
         {
             title: 'Категории',
-            description: 'Например обычныйе билеты, Vip и Фан зона',
+            description: 'Например обычные билеты, Vip и Фан зона',
             target: null,
         },
         {
             title: 'Заполнение категорий',
-            description: 'Для добовление категории необходимо внести информацию о ней.',
+            description: 'Для добавление категории необходимо внести информацию о ней.',
             target: () => ref1.current,
         },
         {
@@ -259,7 +259,7 @@ const CreateEntrance = ({Close}) => {
                             </Card>
                         ))}
                         <Tooltip
-                            title={hall.hallUpdate?.eventCount > 0 ? "Зал привязан к актуальным мероприятиям, поэтому добавить или удалить категории не получиться" : fields.length >= 15 ? "Больше добавить категррий нельзя, макисмум 15":""}>
+                            title={hall.hallUpdate?.eventCount > 0 ? "Зал привязан к актуальным мероприятиям, поэтому добавить или удалить категории не получиться" : fields.length >= 15 ? "Больше добавить категории нельзя, максимум 15":""}>
                             <Button disabled={hall.hallUpdat?.eventCount > 0 || fields.length >= 15} type="dashed" onClick={() => add()} block
                                     ref={ref2}>
                                 Добавить категорию +

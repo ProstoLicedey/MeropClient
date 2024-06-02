@@ -38,7 +38,7 @@ const TypesAdmin = () => {
     return (
         <Space direction="vertical" style={{ width: '100%' }}>
             <Title level={2}>
-                Типы меропрятий
+                Типы мероприятий
             </Title>
             <Button style={{ backgroundColor: '#722ed1' }} type="primary" onClick={()=> setOpen(true)}>
                 Добавить тип <PlusCircleOutlined />

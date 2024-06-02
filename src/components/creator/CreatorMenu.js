@@ -81,7 +81,7 @@ const menuAdmin = [
     {
         key: 'typeEvent',
         icon: <OrderedListOutlined />,
-        label: 'Виды мероприятий'
+        label: 'Типы мероприятий'
     },
 ];
 

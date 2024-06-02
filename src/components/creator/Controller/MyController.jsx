@@ -198,7 +198,7 @@ const MyController = () => {
     return (
         <Space direction="vertical" style={{textAlign: 'left', width: '100%', backgroundColor: 'white', margin: 10}}>
             <Title level={2}>
-                Мои котроллеры
+                Мои контроллер
             </Title>
             <Button
                 type="primary"

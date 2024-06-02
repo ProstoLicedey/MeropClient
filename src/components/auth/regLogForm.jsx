@@ -18,7 +18,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
     const [openPas, setOpenPas] = useState(false);
     const [captch_check, setCaptch_check] = useState(false);
 
-    title(isRegistration ? (!!idCreator ? "Добовление контроллера" : "Регистрация") : "Авторизация");
+    title(isRegistration ? (!!idCreator ? "Добавление контроллера" : "Регистрация") : "Авторизация");
     const buttonText = !isRegistration ? 'Войти' : (!!idCreator ? 'Добавить контроллера' : 'Зарегистрироваться');
     const buttonLabel = !isRegistration ? 'Зарегистрироваться' : (!!idCreator ? '' : 'Войти');
     const recap = () => {
@@ -189,13 +189,11 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                                                     });
                                                     setMessage("Ошибка 451: Недоступно по юридическим причинам.");
                                                 } else {
-                                                    // Обработка других ошибок
                                                     console.error("Произошла ошибка:", error);
-                                                    // Дополнительные действия по обработке ошибок, если необходимо
+
                                                 }
                                             });
                                     } else {
-                                        // Handle case when Captch_check is false
                                         setMessage("Проверка Captcha не пройдена");
                                     }
                                 })

@@ -3,12 +3,11 @@ import {
     CREATOR_ROUTE, CREATORINFO_ROUTE, CREATORREGIST_ROUTE,
     EVENT_ROUTE, HALL_ROUTE,
     HOME_ROUTE,
-    LOGIN_ROUTE, ORDER_ROUTE,
+     ORDER_ROUTE,
     REGISTRATION_ROUTE, TICKET_ROUTE, TICKETCHEK_ROUTE,
     USER_ROUTE
 } from "./utils/consts";
 
-import Login from "./pages/login";
 import Home from "./pages/event/home";
 import Event from "./pages/event/event";
 import Creator from "./pages/creator/creator";

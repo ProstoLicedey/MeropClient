@@ -31,7 +31,7 @@ const EventAdmin = () => {
             })
             .catch((error) => {
                 console.error('Error fetching ticket:', error);
-                setMessage("Внутреняя ошибка");
+                setMessage("Внутренняя ошибка");
             })
     };
 
@@ -49,7 +49,7 @@ const EventAdmin = () => {
             })
             .catch((error) => {
                 console.error('Error fetching ticket:', error);
-                setMessage("Внутреняя ошибка");
+                setMessage("Внутренняя ошибка");
             })
             .finally(() => setFetching(false));
     };

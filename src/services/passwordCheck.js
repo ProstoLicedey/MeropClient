@@ -1,4 +1,3 @@
-
 const passwordCheck = (password) => {
     try {
         if (password) {
@@ -30,10 +29,10 @@ const passwordCheck = (password) => {
 
         return true
         }
-        return 'Внутреняя ошибка с паролем'
+        return 'Внутренняя ошибка с паролем'
     }
     catch (e){
-        return 'Внутреняя ошибка с паролем' + e
+        return 'Внутренняя ошибка с паролем' + e
     }
 };
 

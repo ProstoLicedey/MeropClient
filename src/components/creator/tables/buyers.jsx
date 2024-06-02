@@ -1,11 +1,13 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Button, Input, Space, Spin, Table} from "antd";
+import {Button, Input, Space, Spin, Table, Typography} from "antd";
 import Title from "antd/es/typography/Title";
 import {CREATEEVENT_ROUTE} from "../../../utils/consts";
 import {useNavigate} from "react-router-dom";
 import {Context} from "../../../index";
 import {getEventCreator} from "../../../http/creactorAPI";
 import {SearchOutlined} from "@ant-design/icons";
+import {getPokupki} from "../../../http/orderAPI";
+const { Text} = Typography;
 
 const Buyers = () => {
     const navigate = useNavigate()
@@ -18,9 +20,7 @@ const Buyers = () => {
 
     useEffect(() => {
         if(!!user.user) {
-            console.log(user.user.id)
-            getEventCreator(user.user.id).then(data => creator.setEvents(data)).finally(()=> setLoading(false));
-            console.log(creator.events)
+            getPokupki(user.user.id).then(data => creator.setEvents(data)).finally(()=> setLoading(false));
         }
 
     }, [user.user]);
@@ -119,6 +119,18 @@ const Buyers = () => {
 
 
     });
+
+    const getTicketEnding = count => {
+        if (count % 10 === 1 && count % 100 !== 11) {
+            return 'билет уже использован';
+        } else if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
+            return 'билета уже использовано';
+        } else {
+            return 'билетов уже использовано';
+        }
+    };
+
+
     const columns = [
         {
             title: 'Номер',
@@ -127,6 +139,7 @@ const Buyers = () => {
             width: '10%',
             ...getColumnSearchProps('id'),
             sorter: (a, b) => a.id - b.id,
+
         },
         {
             title: 'Мероприятие',
@@ -135,29 +148,54 @@ const Buyers = () => {
             width: '30%',
             sorter: (a, b) => a.title.length - b.title.length,
             ...getColumnSearchProps('title'),
+
         },
         {
-            title: 'Клиент',
-            dataIndex: 'FIO',
+            title: 'Покупатель',
+            dataIndex: 'fio',
             key: 'fio',
             width: '30%',
             ...getColumnSearchProps('address'),
             sorter: (a, b) => a.address.length - b.address.length,
             sortDirections: ['descend', 'ascend'],
+            render: (text, record) => (
+                <>
+                    <a href={`mailto:${record.email}`}>{record.email}</a><br />
+                    {record.FIO}
+                </>
+            ),
+
         },
+
         {
             title: 'Количество билетов',
             dataIndex: 'countTicket',
             key: 'countTicket',
             width: '10%',
-            ...getColumnSearchProps('address'),
-            sorter: (a, b) => a.address.length - b.address.length,
+            onCell: () => ({
+                style: {
+                    textAlign: 'center',
+                },
+            }),
+            ...getColumnSearchProps('countTicket'),
+            sorter: (a, b) => a.countTicket - b.countTicket,
             sortDirections: ['descend', 'ascend'],
+            render: (text, record) => (
+                <>
+                    {text}
+                    <br />
+                    {record.countTicketUsed !== 0 && (
+                        <Text type="secondary">
+                            {record.countTicketUsed} {getTicketEnding(record.countTicketUsed)}
+                        </Text>
+                    )}
+                </>
+            ),
         },
         {
             title: 'Дата покупки',
-            dataIndex: 'dateTime',
-            key: 'dateTime',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
             width: '20%',
             sortDirections: ['descend', 'ascend'],
         },
@@ -176,12 +214,10 @@ const Buyers = () => {
                Покупки
             </Title>
             <Table
+                bordered
                 style={{overflowX: 'auto'}}
                 columns={columns}
                 dataSource={creator.events}
-                onRow = {(record) => ({
-                onClick: () => onRowClick(record)
-            })}
                 responsive={{ xs: true, sm: true, md: true, lg: true, xl: true, xxl: true }}
             />
         </Space>

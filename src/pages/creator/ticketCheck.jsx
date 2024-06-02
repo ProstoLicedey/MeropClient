@@ -29,7 +29,7 @@ const TicketCheck = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '100vh', // Set to full height of the viewport
+                margin:'5%'
             }}
         >
             {error ? (

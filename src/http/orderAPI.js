@@ -10,3 +10,7 @@ export  const  fetchOneOrder = async (id) =>{
     const  {data} = await $host.get('api/order/getTicket/' + id )
     return data
 }
+export  const  getPokupki = async (id) =>{
+    const  {data} = await $host.get('api/order//toCreator/' + id )
+    return data
+}

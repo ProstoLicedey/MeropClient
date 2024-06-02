@@ -390,7 +390,6 @@ const CreateEvent = () => {
                                                             </Form.Item>
                                                         </div>
                                                     </Tooltip>
-
                                                     <Row style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
                                                         <Col span={8} style={{ flex: '1 1 auto', marginBottom: '8px' }}>
                                                             <Title level={4} style={{ marginRight: '16px', textAlign: 'left' }}>
@@ -488,7 +487,6 @@ const CreateEvent = () => {
                                         });
                                 }}
                             >
-
                                 {id ? "Изменить" : "Создать"}
                             </Button>
                         </Form>)}

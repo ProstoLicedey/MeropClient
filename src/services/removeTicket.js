@@ -1,8 +1,3 @@
-import reciveCodeService from "./userService/updatePass";
-import axios from "axios";
-import {refresh} from "../http/userAPI";
-import {useContext} from "react";
-import {Context} from "../index";
 
 const removeTicket = (entranceOptionPriceId, event, hall) => {
     const index = hall.ticket.findIndex(

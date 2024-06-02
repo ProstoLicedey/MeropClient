@@ -222,6 +222,7 @@ const Halls = () => {
             </Button>
 
             <Table
+                bordered
                 style={{overflowX: 'auto'}}
                 columns={columns}
                 dataSource={creator.halls}
