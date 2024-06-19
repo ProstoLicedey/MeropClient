@@ -6,6 +6,7 @@ import {observer} from "mobx-react-lite";
 import {ReCAPTCHA} from "react-google-recaptcha";
 import {SmartCaptcha} from "@yandex/smart-captcha";
 import passwordCheck from "../../services/passwordCheck";
+import dayjs from "dayjs";
 
 const {Text, Link} = Typography
 
@@ -17,6 +18,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
     const {user} = useContext(Context)
     const [openPas, setOpenPas] = useState(false);
     const [captch_check, setCaptch_check] = useState(false);
+    const [resetCaptcha, setResetCaptcha] = useState(0);
 
     title(isRegistration ? (!!idCreator ? "Добавление контроллера" : "Регистрация") : "Авторизация");
     const buttonText = !isRegistration ? 'Войти' : (!!idCreator ? 'Добавить контроллера' : 'Зарегистрироваться');
@@ -24,6 +26,10 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
     const recap = () => {
         setButtonActiv(true)
     }
+
+    const handleCaptchaError = (error) => {
+        console.error('Ошибка капчи:', error);
+    };
     return (
         <Form
             form={form}
@@ -61,7 +67,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     },
                 ]}
             >
-                <Input.Password maxLength={100}/>
+                <Input.Password maxLength={50}/>
             </Form.Item>
 
             <Form.Item
@@ -84,7 +90,7 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     }),
                 ]}
             >
-                <Input.Password maxLength={100}/>
+                <Input.Password maxLength={50}/>
             </Form.Item>
             <Form.Item
                 hidden={!isRegistration}
@@ -126,12 +132,23 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                     },
                 ]}
             >
-                <DatePicker sty placeholder=""/>
+                <DatePicker
+                    sty
+                    placeholder=""
+                    disabledDate={current =>
+                        current && (current.isBefore(dayjs('1930-01-01')) || current.isAfter(dayjs()))
+                    }
+                />
             </Form.Item>
 
             <Space size={'large'}>
                 <SmartCaptcha sitekey={process.env.REACT_APP_CAPTCHA_KEY}
-                              onSuccess={() => setCaptch_check(true)}/>
+                              defaultChecked={true}
+                              onSuccess={() => setCaptch_check(true)}
+                              onError={handleCaptchaError}
+                              onJavaScriptError={handleCaptchaError}
+                              onTokenExpired={handleCaptchaError}
+                />
             </Space>
             <div hidden={isRegistration}
                  style={{textAlign: 'right', cursor: 'pointer'}}
@@ -192,7 +209,8 @@ const RegLogForm = ({title, onCancel, setPassUpdate, idCreator}) => {
                                                     console.error("Произошла ошибка:", error);
 
                                                 }
-                                            });
+                                            })
+                                            .finally(()=>  setResetCaptcha((prev) => prev + 1))
                                     } else {
                                         setMessage("Проверка Captcha не пройдена");
                                     }

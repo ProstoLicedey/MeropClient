@@ -60,7 +60,7 @@ const OrderCard = ({thisOrder}) => {
                     </div>
                 }
             >
-                <Title level={4} style={{height: '2em'}}>
+                <Title level={4} evel={4} style={{ maxHeight: '3em', overflow: 'hidden' }}>
                     {thisOrder.title}
                 </Title>
                 <Tag color= {StatusColor}>{StatusView}</Tag>

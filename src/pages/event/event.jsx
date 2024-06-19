@@ -1,52 +1,63 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { fetchOneEvent } from '../../http/eventAPI';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Context } from '../../index';
-import { Button, Card, Col, Collapse, Image, notification, Row, Space, Tag, Typography } from 'antd';
-import { observer } from 'mobx-react-lite';
+import React, {useContext, useEffect, useState} from 'react';
+import {fetchOneEvent} from '../../http/eventAPI';
+import {useNavigate, useParams} from 'react-router-dom';
+import {Context} from '../../index';
+import {Button, Card, Col, Collapse, Image, notification, Row, Space, Spin, Tag, Typography} from 'antd';
+import {observer} from 'mobx-react-lite';
 import Title from 'antd/es/typography/Title';
 import ShareButton from '../../components/event/ShareButton';
 import AddressLink from '../../components/event/AddressLink';
 import Paragraph from 'antd/es/typography/Paragraph';
 import DrawerBuy from "./DrawerBuy";
 import CollectionCreateForm from "../../components/auth/authModals";
-import { EVENT_ROUTE, HALL_ROUTE } from "../../utils/consts";
+import {EVENT_ROUTE, HALL_ROUTE} from "../../utils/consts";
 import moment from "moment";
-import { CalendarOutlined } from "@ant-design/icons";
+import {CalendarOutlined} from "@ant-design/icons";
 import IconCalendar from "../../assets/icon/CalendarIcon";
 import MoneyIcon from "../../assets/icon/MoneyIcon";
-import { ReCAPTCHA } from "react-google-recaptcha";
+import {ReCAPTCHA} from "react-google-recaptcha";
 import ErrorPage from "../ErrorPage";
 
-const { Text, Link } = Typography;
-const { Panel } = Collapse;
+const {Text, Link} = Typography;
+const {Panel} = Collapse;
 
 const Event = () => {
-    const { id } = useParams();
-    const { event, user } = useContext(Context);
+    const {id} = useParams();
+    const {event, user} = useContext(Context);
     const [expanded, setExpanded] = useState(false);
     const [rows, setRows] = useState(3);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [openAuth, setOpenAuth] = useState(false);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true); // Состояние для отслеживания загрузки данных
+
 
     useEffect(() => {
         fetchOneEvent(id)
             .then(data => event.setEvent(data))
-            .catch((e) => console.log(e));
+            .catch((e) => console.log(e))
+            .finally(() => setLoading(false))
     }, [id, event]);
 
+    if (loading) {
+        return (
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+                <Spin size="large"/>
+            </div>
+        )
+    }
     if (!event.event || Object.keys(event.event).length === 0 || !id) {
-        return <ErrorPage />;
+        return <ErrorPage/>;
     }
     const handleExpand = () => {
-        setExpanded(prevExpanded => !prevExpanded);
-        setRows(prevRows => (prevRows === 3 ? 0 : 3));
+        // setExpanded(prevExpanded => !prevExpanded);
+        // setRows(prevRows => (prevRows === 3 ? 0 : 3));
+        setExpanded(!expanded);
     };
 
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Row style={{ margin: '5%' }}>
+        <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+            <Row style={{margin: '5%'}}>
                 <Col md={7}>
                     <Image
                         alt="photo"
@@ -60,70 +71,69 @@ const Event = () => {
                         }}
                     />
                 </Col>
-                <Col md={9} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Col md={9} style={{width: '100%', display: 'flex', flexDirection: 'column'}}>
                     <Space direction="vertical" size={"middle"}>
                         <Row>
-                            <Tag style={{ fontWeight: 'bold' }} bordered={false}>
+                            <Tag style={{fontWeight: 'bold'}} bordered={false}>
                                 {event.event.ageRating ? event.event.ageRating : 0}+
                             </Tag>
-                            <Tag style={{ fontWeight: 'bold' }} bordered={false}>
+                            <Tag style={{fontWeight: 'bold'}} bordered={false}>
                                 {event.event.type ? event.event.type : null}
                             </Tag>
                             {new Date(event.event.dateTime) < new Date() && (<Tag color="red">Мероприятие прошло</Tag>)}
                         </Row>
                         <Title>{event.event.title}</Title>
                         <AddressLink
-                            style={{ marginTop: -10 }}
+                            style={{marginTop: -10}}
                             name={event.event.hall ? event.event.hall.name : event.event.entrance ? event.event.entrance.name : null}
                             address={event.event.hall ? event.event.hall.city.name + " " + event.event.hall.address : event.event.entrance ? event.event.entrance.city.name + " " + event.event.entrance.address : null}
-                            styleIcon={{ width: 30, height: 30, marginRight: 5 }}
-                            styleTitle={{ cursor: "pointer" }}
+                            styleIcon={{width: 30, height: 30, marginRight: 5}}
+                            styleTitle={{cursor: "pointer"}}
                             level={4}
                             underline={true}
                         />
-                        <Row style={{ display: 'flex', alignItems: 'center' }}>
-                            <IconCalendar style={{ width: 30, height: 30, marginRight: 5 }} />
-                            <Title level={4}>{moment(event.event.dateTime).locale('ru').format('DD MMMM HH:mm ddd ')}</Title>
+                        <Row style={{display: 'flex', alignItems: 'center'}}>
+                            <IconCalendar style={{width: 30, height: 30, marginRight: 5}}/>
+                            <Title
+                                level={4}>{moment(event.event.dateTime).locale('ru').format('DD MMMM HH:mm ddd ')}</Title>
                         </Row>
                         <Row>
-                            <MoneyIcon style={{ width: 30, height: 30, marginRight: 5 }} />
-                            <Title level={4}>{event.event.minPrice}-{event.event.maxPrice}₽</Title>
+                            <MoneyIcon style={{width: 30, height: 30, marginRight: 5}}/>
+                            <Title
+                                level={4}>{event.event.minPrice === event.event.maxPrice ? `${event.event.minPrice}₽` : `${event.event.minPrice}-${event.event.maxPrice}₽`}</Title>
                         </Row>
-                        <div>
-                            <Paragraph
-                                ellipsis={{
-                                    rows,
-                                    symbol: expanded ? 'Свернуть' : 'Подробнее',
-                                }}
-                                title={event.event.description}
-                                style={{ whiteSpace: 'pre-wrap' }}
-                            >
-                                {event.event.description}
-                            </Paragraph>
-                            {event.event.description?.length > 420 && (
+                        <Row>
+                            <p style={{ whiteSpace: 'pre-wrap', maxWidth: '100%', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                                {expanded ? event.event.description : `${event.event.description.slice(0, 150)}...`}
+                            </p>
+                            {event.event.description.length > 150 && (
                                 <Button type="link" onClick={handleExpand} style={{ float: 'right', marginTop: '-1em' }}>
                                     {expanded ? 'Свернуть' : 'Подробнее'}
                                 </Button>
                             )}
-                        </div>
+                        </Row>
                     </Space>
                 </Col>
-                <Col md={8} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Col md={8} style={{width: '100%', display: 'flex', flexDirection: 'column'}}>
                     <Card
-                        style={{marginTop:10, marginBottom:10}}
-                        title={"Органиатор мероприятия: " + event.event.creatorName}
+                        style={{marginTop: 10, marginBottom: 10}}
+                        title={"Органиатор мероприятия"}
 
                     >
+                        <Text strong>{event.event.creatorName}</Text>
+                        <br/>
                         {event.event.creatorDiscription}
                         <br/>
+                        <br/>
                         Контакты: <a href={"mailto:" + event.event.creatorEmail}>
-                            {event.event.creatorEmail}
-                        </a>
+                        {event.event.creatorEmail}
+                    </a>
                     </Card>
-                    <Space style={{  marginTop: 'auto', alignSelf: 'flex-end',}} hidden={new Date(event.event.dateTime) < new Date()}>
+                    <Space style={{marginTop: 'auto', alignSelf: 'flex-end',}}
+                           hidden={new Date(event.event.dateTime) < new Date()}>
                         <Button
                             type="primary"
-                            style={{ backgroundColor: '#722ed1', height: '4em', fontSize: '1.4em', }}
+                            style={{backgroundColor: '#722ed1', height: '4em', fontSize: '1.4em',}}
                             onClick={() => {
                                 if (user.user.role !== "USER") {
                                     return notification.warning({
@@ -144,11 +154,11 @@ const Event = () => {
                         >
                             {!!event.event.hall ? 'Выбрать место' : 'Бронировать'}
                         </Button>
-                        <ShareButton />
+                        <ShareButton/>
                     </Space>
                 </Col>
             </Row>
-            <DrawerBuy open={openDrawer} onClose={() => setOpenDrawer(false)} />
+            <DrawerBuy open={openDrawer} onClose={() => setOpenDrawer(false)}/>
             <CollectionCreateForm
                 open={openAuth}
                 onCancel={() => setOpenAuth(false)}

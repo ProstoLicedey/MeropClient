@@ -66,7 +66,7 @@ const CreateEvent = () => {
     const [fileList, setFileList] = React.useState([]);
     const [captch_check, setCaptch_check] = useState(!!id);
     const [photoCheck, setPhotoCheck] = useState(false);
-
+    const [resetCaptcha, setResetCaptcha] = useState(0);
 
     const navigate = useNavigate()
 
@@ -158,6 +158,9 @@ const CreateEvent = () => {
     const filterOption = (input, option) =>
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
 
+    const handleCaptchaError = (error) => {
+        console.error('Ошибка капчи:', error);
+    };
 
     return (
         <Row style={{
@@ -296,7 +299,11 @@ const CreateEvent = () => {
                                 ]}
                             >
                                 <SmartCaptcha
+                                    key={resetCaptcha}
                                     sitekey={process.env.REACT_APP_CAPTCHA_KEY_CREATOR}
+                                    onError={handleCaptchaError}
+                                    onJavaScriptError={handleCaptchaError}
+                                    onTokenExpired={handleCaptchaError}
                                     onSuccess={() => {
                                         setCaptch_check(true);
                                         formEvent.setFieldsValue({ captcha: true });
@@ -442,6 +449,8 @@ const CreateEvent = () => {
                                                                 description: 'Заполните поля верно'
                                                             });
                                                         }
+                                                      setResetCaptcha((prev) => prev + 1);
+
                                                         if (!id) {
                                                             createEvent(formEvent.getFieldsValue(), user.user.id, fileList[0], form.getFieldsValue(), creator.entrance.type)
                                                                 .then((response) => {

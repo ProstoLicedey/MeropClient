@@ -20,7 +20,7 @@ const EventItem = ({ thisEvent }) => {
     return (
         <Card
             hoverable
-            style={{ width: 240 }}
+            style={{ width: 240, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', maxHeight:550, height:550 }}
             onClick={() => navigate(src)}
             cover={
                 <div style={{ position: 'relative', paddingBottom: '150%' }}>
@@ -72,7 +72,7 @@ const EventItem = ({ thisEvent }) => {
             >
                 {thisEvent.ageRating ? thisEvent.ageRating.age : null}+
             </div>
-            <Title level={4} style={{ height: '3em' }}>
+            <Title level={4} style={{ maxHeight: '3em', overflow: 'hidden' }}>
                 {thisEvent.title}
             </Title>
             <Title level={5} type="secondary" style={{ height: '1em' }}>

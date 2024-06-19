@@ -318,9 +318,20 @@ const CreateZal = ({Close}) => {
                             form
                                 .validateFields()
                                 .then((values) => {
+                                    const hasOnlySpaces = Object.values(values).some(
+                                        (value) => typeof value === 'string' && value.trim() === ''
+                                    );
+
+                                    if (hasOnlySpaces) {
+                                        return notification.error({
+                                            message: 'Что-то пошло не так',
+                                            description:"Пожалуйста, проверьте корректность заполнения формы",
+
+                                        })
+                                    }
 
                                     let array = create2DArray(values.row, values.seat);
-                                    console.log(values)
+
                                     values.option.map((op) => {
                                         const row = op.row ? op.row : [1, values.row];
                                         const seat = op.seat ? op.seat : [1, values.seat];

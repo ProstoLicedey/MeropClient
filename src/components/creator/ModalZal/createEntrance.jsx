@@ -7,7 +7,7 @@ import {
     Flex,
     Form,
     Input,
-    InputNumber,
+    InputNumber, notification,
     Select,
     Space,
     Tooltip,
@@ -273,44 +273,64 @@ const CreateEntrance = ({Close}) => {
                 <Input disabled/>
             </Form.Item>
             <Form.Item style={{textAlign: 'center'}}>
-                <Button type="primary" htmlType="submit"
-                        style={{width: 200, height: 40, fontSize: 18, backgroundColor: '#722ed1'}}
-                        onClick={() => {
-                            form
-                                .validateFields()
-                                .then((values) => {
-                                        const userId = user.user.id;
-                                        values.userId = userId;
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ width: 200, height: 40, fontSize: 18, backgroundColor: '#722ed1' }}
+                    onClick={() => {
+                        form
+                            .validateFields()
+                            .then((values) => {
+                                const userId = user.user.id;
+                                values.userId = userId;
 
-                                        if (!!hall.hallUpdate?.id) {
-                                            values.eventCount = hall.hallUpdate?.eventCount;
-                                            updateEntrance(values, hall.hallUpdate?.id)
-                                                .then(() => {
-                                                    Close()
-                                                    form.resetFields();
-                                                })
-                                                .catch(error => {
-                                                    console.error("Ошибка при выполнении запроса:", error);
-                                                });
-                                        } else {
-                                            createEntrance(values)
-                                                .then(() => {
-                                                    Close()
-                                                    form.resetFields();
-                                                })
-                                                .catch(error => {
-                                                    console.error("Ошибка при выполнении запроса:", error);
-                                                });
-                                        }
-                                    }
-                                )
-                                .catch((error) => {
-                                    console.error("Error during form validation:", error);
-                                });
-                        }}
+                                const hasOnlySpaces = Object.values(values).some(
+                                    (value) => typeof value === 'string' && value.trim() === ''
+                                );
+
+                                if (hasOnlySpaces) {
+                                    return notification.error({
+                                        message: 'Что-то пошло не так',
+                                        description:"Пожалуйста, проверьте корректность заполнения формы",
+
+                                    })
+                                }
+
+                                if (!!hall.hallUpdate?.id) {
+                                    values.eventCount = hall.hallUpdate?.eventCount;
+                                    updateEntrance(values, hall.hallUpdate?.id)
+                                        .then(() => {
+                                            Close();
+                                            form.resetFields();
+                                        })
+                                        .catch((error) => {
+                                            return notification.error({
+                                                message: 'Ошибка',
+
+                                            })
+                                        });
+                                } else {
+                                    createEntrance(values)
+                                        .then(() => {
+                                            Close();
+                                            form.resetFields();
+                                        })
+                                        .catch((error) => {
+                                            return notification.error({
+                                                message: 'Ошибка',
+
+                                            })
+                                        });
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error during form validation:", error);
+                            });
+                    }}
                 >
                     {!!hall.hallUpdate?.id ? "Изменить" : "Создать"}
                 </Button>
+
             </Form.Item>
             <ConfigProvider locale={ruRU}>
             <Tour open={open}

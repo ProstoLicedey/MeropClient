@@ -129,7 +129,7 @@ const ParametersBar = observer(() => {
 
                 <Slider
                     range
-                    min={1}
+                    min={0}
                     max={priceMax}
                     onChange={onSliderChange}
                     value={sliderValues}

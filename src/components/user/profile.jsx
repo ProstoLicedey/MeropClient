@@ -6,6 +6,7 @@ import { Context } from '../../index';
 import moment from 'moment';
 import { USER_ROUTE } from "../../utils/consts";
 import { getInfo, putUser } from "../../http/userAPI";
+import dayjs from "dayjs";
 
 const Profile = () => {
     const { user } = useContext(Context);
@@ -110,7 +111,13 @@ const Profile = () => {
                             },
                         ]}
                     >
-                        <DatePicker size="large" placeholder="Дата рождения" />
+                        <DatePicker
+                            disabledDate={current =>
+                                current && (current.isBefore(dayjs('1930-01-01')) || current.isAfter(dayjs()))
+                            }
+                            size="large"
+                            placeholder="Дата рождения"
+                        />
                     </Form.Item>
                     <Form.Item style={{ textAlign: 'center' }}>
                         <Button

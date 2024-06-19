@@ -26,6 +26,7 @@ const App = observer (() =>  {
         if(localStorage.getItem('token')){
              checkAuthService(user).finally(()=> setLoading(false))
         }
+        setLoading(false)
     }, []);
 
     if (loading){
